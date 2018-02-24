@@ -77,6 +77,9 @@ public class PostMessageTask extends AsyncTask<String, Void, String> {
 
     private FormBody.Builder addCategories(FormBody.Builder builder, String category) {
         String[] categories = category.split("\\s+");
+        if (categories.length == 1 && categories[0].equals("")) {
+            return builder;
+        }
         for (String cat : categories) {
             builder.add("category[]", cat);
         }
