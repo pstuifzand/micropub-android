@@ -6,44 +6,46 @@ import android.accounts.AccountManagerCallback;
 import android.accounts.AccountManagerFuture;
 import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
+import android.app.Activity;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.EditText;
+import android.view.View;
 import android.widget.Toast;
 
 import java.io.IOException;
 
-import okhttp3.Call;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import eu.stuifzand.micropub.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+//        setContentView(R.layout.activity_main);
+        ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        PostViewModel model = ViewModelProviders.of(MainActivity.this).get(PostViewModel.class);
+        binding.setViewModel(model);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+//            }
+//        });
+
     }
 
     @Override
@@ -76,8 +78,6 @@ public class MainActivity extends AppCompatActivity {
         AccountManager am = AccountManager.get(this);
         Bundle options = new Bundle();
         am.getAuthTokenByFeatures("Indieauth", "token", null, this, options, null, new OnTokenAcquired(true), null);
-
-
     }
 
     private class OnTokenAcquired implements AccountManagerCallback<Bundle> {
@@ -103,19 +103,23 @@ public class MainActivity extends AppCompatActivity {
                 String token = bundle.getString(AccountManager.KEY_AUTHTOKEN);
 
                 if (sendMessage) {
-                    EditText mEdit = (EditText) findViewById(R.id.content);
+                    PostViewModel model = ViewModelProviders.of(MainActivity.this).get(PostViewModel.class);
                     AccountManager am = AccountManager.get(MainActivity.this);
                     Account[] accounts = am.getAccountsByType(bundle.getString("accountType"));
                     String accountName = bundle.getString("authAccount");
-                    String micropub = null;
+
+                    String micropubBackend = null;
                     for (Account account : accounts) {
                         if (account.name.equals(accountName)) {
-                            micropub = am.getUserData(account, "micropub");
+                            micropubBackend = am.getUserData(account, "micropub");
                         }
                     }
-                    String micropubBackend = micropub;
-                    Log.i("micropub", "Sending message to " + micropubBackend);
-                    new PostMessageTask(MainActivity.this, token, mEdit).execute(micropubBackend, mEdit.getText().toString());
+
+                    if (micropubBackend != null) {
+                        Log.i("micropub", "Sending message to " + micropubBackend);
+                        new PostMessageTask(MainActivity.this, token, model, micropubBackend)
+                                .execute();
+                    }
                 }
 
                 Log.d("micropub", "GetTokenForAccount Bundle is " + token);

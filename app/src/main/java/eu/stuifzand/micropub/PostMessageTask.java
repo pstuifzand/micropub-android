@@ -3,8 +3,6 @@ package eu.stuifzand.micropub;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.view.View;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -19,25 +17,28 @@ import okhttp3.Response;
 
 public class PostMessageTask extends AsyncTask<String, Void, String> {
     private final String accessToken;
-    private EditText mEdit;
+    private PostViewModel postModel;
+    private String micropubBackend;
     private WeakReference<Context> context;
 
-    public PostMessageTask(Context context, String accessToken, EditText mEdit) {
+    public PostMessageTask(Context context, String accessToken, PostViewModel postModel, String micropubBackend) {
         this.context = new WeakReference<Context>(context);
         this.accessToken = accessToken;
-        this.mEdit = mEdit;
+        assert postModel != null;
+        this.postModel = postModel;
+        this.micropubBackend = micropubBackend;
     }
 
     @Override
     protected String doInBackground(String... strings) {
-        RequestBody formBody = new FormBody.Builder()
-                .add("content", strings[1])
-                .build();
+        FormBody.Builder builder = new FormBody.Builder();
+        builder.add("content", postModel.content.get());
+        RequestBody formBody = builder.build();
 
         Request request = new Request.Builder()
                 .addHeader("Authorization", "Bearer " + accessToken)
                 .method("POST", formBody)
-                .url(strings[0])
+                .url(micropubBackend)
                 .build();
 
         OkHttpClient client = new OkHttpClient();
@@ -59,7 +60,7 @@ public class PostMessageTask extends AsyncTask<String, Void, String> {
     }
 
     protected void onPostExecute(String message) {
-        mEdit.setText("");
         Toast.makeText(context.get(), message, Toast.LENGTH_SHORT).show();
+        postModel.content.set("");
     }
 }
