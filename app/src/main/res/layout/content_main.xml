@@ -27,6 +27,7 @@
             android:background="@android:color/white"
             android:ems="10"
             android:gravity="top"
+            android:hint="Content"
             android:inputType="textMultiLine"
             android:padding="3dp"
             android:singleLine="false"
@@ -40,12 +41,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
             android:layout_marginTop="8dp"
             android:onClick="sendPost"
             android:text="Post"
-            app:layout_constraintEnd_toEndOf="@+id/content"
-            app:layout_constraintTop_toBottomOf="@+id/content" />
+            app:layout_constraintEnd_toEndOf="@+id/editCategory"
+            app:layout_constraintTop_toBottomOf="@+id/editCategory" />
 
         <Button
             android:id="@+id/button"
@@ -68,19 +68,22 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/textView2"
+        <EditText
+            android:id="@+id/editCategory"
             android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
+            android:layout_height="36dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
-            android:text="@{viewModel.content}"
-            app:layout_constraintBottom_toTopOf="@+id/button"
+            android:background="@android:color/background_light"
+            android:ems="10"
+            android:hint="Categories (space separated)"
+            android:inputType="text"
+            android:singleLine="true"
+            android:text="@={viewModel.category}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btnPost" />
+            app:layout_constraintTop_toBottomOf="@+id/content" />
 
     </android.support.constraint.ConstraintLayout>
 

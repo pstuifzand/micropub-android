@@ -14,6 +14,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import okhttp3.logging.HttpLoggingInterceptor;
 
 public class PostMessageTask extends AsyncTask<String, Void, String> {
     private final String accessToken;
@@ -31,17 +32,29 @@ public class PostMessageTask extends AsyncTask<String, Void, String> {
 
     @Override
     protected String doInBackground(String... strings) {
-        FormBody.Builder builder = new FormBody.Builder();
-        builder.add("content", postModel.content.get());
-        RequestBody formBody = builder.build();
+        String content = postModel.content.get();
 
+        FormBody.Builder builder = new FormBody.Builder();
+        builder.add("h", "entry")
+                .add("content", content);
+
+        addCategories(builder, postModel.category.get());
+
+        RequestBody formBody = builder.build();
         Request request = new Request.Builder()
                 .addHeader("Authorization", "Bearer " + accessToken)
                 .method("POST", formBody)
                 .url(micropubBackend)
                 .build();
 
-        OkHttpClient client = new OkHttpClient();
+        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+        OkHttpClient client = new OkHttpClient.Builder()
+                .addInterceptor(logging)
+                .build();
+
+
         String msg;
         Call call = client.newCall(request);
         Response response = null;
@@ -59,8 +72,16 @@ public class PostMessageTask extends AsyncTask<String, Void, String> {
         }
     }
 
+    private FormBody.Builder addCategories(FormBody.Builder builder, String category) {
+        String[] categories = category.split("\\s+");
+        for (String cat : categories) {
+            builder.add("category[]", cat);
+        }
+        return builder;
+    }
+
     protected void onPostExecute(String message) {
         Toast.makeText(context.get(), message, Toast.LENGTH_SHORT).show();
-        postModel.content.set("");
+        postModel.clear();
     }
 }
