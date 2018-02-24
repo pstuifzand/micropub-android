@@ -13,6 +13,8 @@ import android.text.TextUtils;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import org.w3c.dom.Text;
+
 import java.io.IOException;
 
 import okhttp3.Call;
@@ -79,9 +81,11 @@ public class Authenticator extends AbstractAccountAuthenticator {
                     .add("me", account.name)
                     .add("grant_type", "authorization_code")
                     .build();
+
+            String tokenEndpoint = am.getUserData(account, "token_endpoint");
             Request request = new Request.Builder()
                     .addHeader("Accept", "application/json")
-                    .url("https://tokens.indieauth.com/token")
+                    .url(tokenEndpoint)
                     .method("POST", formBody)
                     .build();
 

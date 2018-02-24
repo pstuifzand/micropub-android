@@ -20,7 +20,7 @@ public class AuthenticatedActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         String urlString = intent.getStringExtra("url");
-        String endpoint = intent.getStringExtra(WebsigninTask.ENDPOINT);
+        String endpoint = intent.getStringExtra("authorization_endpoint");
         String me = intent.getStringExtra(WebsigninTask.ME);
 
         TextView textResult = findViewById(R.id.textResult);

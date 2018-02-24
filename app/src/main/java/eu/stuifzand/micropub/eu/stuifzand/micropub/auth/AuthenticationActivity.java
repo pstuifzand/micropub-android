@@ -26,7 +26,6 @@ public class AuthenticationActivity extends AccountAuthenticatorActivity {
 
     private static final String TAG = "AuthenticationActivity";
     public static final String PARAM_USER_PASS = "eu.stuifzand.micropub.UserPass";
-    private static final int REQ_SIGNUP = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +33,7 @@ public class AuthenticationActivity extends AccountAuthenticatorActivity {
         setContentView(R.layout.activity_authentication);
 
         Intent intent = getIntent();
-        final String endpoint = intent.getStringExtra(WebsigninTask.ENDPOINT);
+        final String endpoint = intent.getStringExtra("authorization_endpoint");
         final String me = intent.getStringExtra(WebsigninTask.ME);
         final AccountAuthenticatorResponse response = intent.getParcelableExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE);
 
@@ -59,13 +58,6 @@ public class AuthenticationActivity extends AccountAuthenticatorActivity {
                 Log.i("micropub", "New API: " + request.getUrl().toString());
                 String url = request.getUrl().toString();
                 if (url.startsWith("https://stuifzand.eu/micropub-auth")) {
-
-//                    Intent intent = new Intent(AuthenticationActivity.this, AuthenticatedActivity.class);
-//                    intent.putExtra("url", url);
-//                    intent.putExtra(ENDPOINT, endpoint);
-//                    intent.putExtra(ME, me);
-//                    startActivity(intent);
-
                     HttpUrl httpUrl = HttpUrl.parse(url);
                     String code = httpUrl.queryParameter("code");
                     String state = httpUrl.queryParameter("state");
@@ -104,7 +96,10 @@ public class AuthenticationActivity extends AccountAuthenticatorActivity {
 
             // Creating the account on the device and setting the auth token we got
             // (Not setting the auth token will cause another call to the server to authenticate the user)
-            accountManager.addAccountExplicitly(account, accountPassword, null);
+            Bundle bundle = new Bundle();
+            bundle.putAll(getIntent().getExtras());
+            Log.i("micropub", bundle.toString());
+            accountManager.addAccountExplicitly(account, accountPassword, bundle);
             accountManager.setAuthToken(account, authtokenType, authtoken);
         } else {
             Log.d("micropub", TAG + "> finishLogin > setPassword");

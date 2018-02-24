@@ -5,6 +5,8 @@ import android.accounts.AccountManager;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Bundle;
+import android.util.Log;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -14,8 +16,7 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 
 
-public class WebsigninTask extends AsyncTask<String, Void, WebsigninTask.AuthResponse> {
-    public static final String ENDPOINT = "eu.stuifzand.microsub.ENDPOINT";
+public class WebsigninTask extends AsyncTask<String, Void, Bundle> {
     public static final String ME = "eu.stuifzand.micropub.ME";
     protected AccountAuthenticatorResponse response;
     protected Activity activity;
@@ -31,30 +32,37 @@ public class WebsigninTask extends AsyncTask<String, Void, WebsigninTask.AuthRes
     }
 
     @Override
-    protected AuthResponse doInBackground(String... strings) {
+    protected Bundle doInBackground(String... strings) {
+        Bundle bundle = new Bundle();
         try {
+            bundle.putString(ME, strings[0]);
             Document doc = Jsoup.connect(strings[0]).get();
-            Elements links = doc.select("link[rel=\"authorization_endpoint\"]");
+            Elements links = doc.select("link");
             for (Element link : links) {
-                String href = link.attr("href");
-
-                AuthResponse auth = new AuthResponse();
-                auth.me = strings[0];
-                auth.endpoint = href;
-                return auth;
+                String rel = link.attr("rel");
+                if (rel.equals("authorization_endpoint")) {
+                    bundle.putString(rel, link.attr("href"));
+                }
+                else if (rel .equals("token_endpoint")) {
+                    bundle.putString(rel, link.attr("href"));
+                }
+                else if (rel.equals("micropub")) {
+                    bundle.putString(rel, link.attr("href"));
+                }
             }
+
         } catch (IOException e) {
-            return null;
+            return bundle;
         }
-        return null;
+        Log.i("micropub", bundle.toString());
+        return bundle;
     }
 
     @Override
-    protected void onPostExecute(AuthResponse auth) {
+    protected void onPostExecute(Bundle bundle) {
         Intent intent = new Intent(this.activity, AuthenticationActivity.class);
         intent.putExtras(activity.getIntent());
-        intent.putExtra(ENDPOINT, auth.endpoint);
-        intent.putExtra(ME, auth.me);
+        intent.putExtras(bundle);
         intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, response);
 
         this.activity.startActivity(intent);

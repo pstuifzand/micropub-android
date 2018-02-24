@@ -75,12 +75,18 @@ public class MainActivity extends AppCompatActivity {
     public void sendPost(View view) {
         AccountManager am = AccountManager.get(this);
         Bundle options = new Bundle();
-        am.getAuthTokenByFeatures("Indieauth", "token", null, this, options, null, new OnTokenAcquired(), null);
+        am.getAuthTokenByFeatures("Indieauth", "token", null, this, options, null, new OnTokenAcquired(true), null);
 
 
     }
 
     private class OnTokenAcquired implements AccountManagerCallback<Bundle> {
+        private boolean sendMessage;
+
+        public OnTokenAcquired(boolean sendMessage) {
+            this.sendMessage = sendMessage;
+        }
+
         @Override
         public void run(AccountManagerFuture<Bundle> result) {
             // Get the result of the operation from the AccountManagerFuture.
@@ -96,9 +102,21 @@ public class MainActivity extends AppCompatActivity {
                 // is stored in the constant AccountManager.KEY_AUTHTOKEN.
                 String token = bundle.getString(AccountManager.KEY_AUTHTOKEN);
 
-                EditText mEdit = (EditText) findViewById(R.id.content);
-                //new PostMessageTask(MainActivity.this, token).execute("http://192.168.178.21:5000/micropub", mEdit.getText().toString());
-                new PostMessageTask(MainActivity.this, token, mEdit).execute("https://publog.stuifzandapp.com/micropub", mEdit.getText().toString());
+                if (sendMessage) {
+                    EditText mEdit = (EditText) findViewById(R.id.content);
+                    AccountManager am = AccountManager.get(MainActivity.this);
+                    Account[] accounts = am.getAccountsByType(bundle.getString("accountType"));
+                    String accountName = bundle.getString("authAccount");
+                    String micropub = null;
+                    for (Account account : accounts) {
+                        if (account.name.equals(accountName)) {
+                            micropub = am.getUserData(account, "micropub");
+                        }
+                    }
+                    String micropubBackend = micropub;
+                    Log.i("micropub", "Sending message to " + micropubBackend);
+                    new PostMessageTask(MainActivity.this, token, mEdit).execute(micropubBackend, mEdit.getText().toString());
+                }
 
                 Log.d("micropub", "GetTokenForAccount Bundle is " + token);
             } catch (OperationCanceledException e) {
@@ -114,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
     public void startSignin(View view) {
         AccountManager am = AccountManager.get(this);
         Bundle options = new Bundle();
-        am.getAuthTokenByFeatures("Indieauth", "token", null, this, options, null, new OnTokenAcquired(), null);
+        am.getAuthTokenByFeatures("Indieauth", "token", null, this, options, null, new OnTokenAcquired(false), null);
     }
 
     private void showMessage(final String msg) {
