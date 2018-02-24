@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="eu.stuifzand.micropub">
+
+    <uses-permission
+        android:name="android.permission.AUTHENTICATE_ACCOUNTS"
+        android:maxSdkVersion="22" />
+    <uses-permission
+        android:name="android.permission.GET_ACCOUNTS"
+        android:maxSdkVersion="22" />
+    <uses-permission
+        android:name="android.permission.GET_ACCOUNTS"
+        android:maxSdkVersion="22" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <uses-permission
+        android:name="android.permission.MANAGE_ACCOUNTS"
+        android:maxSdkVersion="22" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".eu.stuifzand.micropub.auth.WebSigninActivity" />
+        <activity android:name=".eu.stuifzand.micropub.auth.AuthenticationActivity" />
+        <activity
+            android:name=".eu.stuifzand.micropub.auth.AuthenticatedActivity"
+            android:label="@string/title_activity_authenticated"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="eu.stuifzand.micropub.MainActivity" />
+        </activity>
+        <activity android:name=".eu.stuifzand.micropub.auth.AccountsActivity"></activity>
+
+        <service
+            android:name=".eu.stuifzand.micropub.auth.AuthenticatorService"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.accounts.AccountAuthenticator" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/authenticator" /> <!-- We haven't defined this -->
+        </service>
+    </application>
+
+
+</manifest>

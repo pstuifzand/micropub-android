@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Micropub</string>
+    <string name="action_settings">Settings</string>
+    <string name="button">Post</string>
+    <string name="name">Name</string>
+    <string name="content">Content</string>
+    <string name="title_activity_authenticated">AuthenticatedActivity</string>
+    <string name="account_type">Indieauth</string>
+</resources>

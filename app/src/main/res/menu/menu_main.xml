@@ -1,0 +1,18 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="eu.stuifzand.micropub.MainActivity">
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:title="@string/action_settings"
+        app:showAsAction="never" />
+
+    <item android:id="@+id/action_send"
+        android:orderInCategory="10"
+        android:title="Send"
+        android:icon="@drawable/ic_menu_send"
+        app:showAsAction="ifRoom"
+        />
+
+</menu>
