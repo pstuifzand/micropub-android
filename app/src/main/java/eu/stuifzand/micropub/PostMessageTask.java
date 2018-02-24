@@ -36,9 +36,12 @@ public class PostMessageTask extends AsyncTask<String, Void, String> {
 
         FormBody.Builder builder = new FormBody.Builder();
         builder.add("h", "entry")
-                .add("content", content);
+               .add("content", content);
 
         addCategories(builder, postModel.category.get());
+        if (postModel.inReplyTo.get().startsWith("http")) {
+            builder.add("in-reply-to", postModel.inReplyTo.get());
+        }
 
         RequestBody formBody = builder.build();
         Request request = new Request.Builder()

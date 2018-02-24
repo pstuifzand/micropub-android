@@ -23,7 +23,7 @@
             android:layout_height="230dp"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
             android:background="@android:color/white"
             android:ems="10"
             android:gravity="top"
@@ -34,7 +34,7 @@
             android:text="@={viewModel.content}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/labelCounter" />
+            app:layout_constraintTop_toBottomOf="@+id/editInReplyTo" />
 
         <Button
             android:id="@+id/btnPost"
@@ -60,13 +60,16 @@
 
         <TextView
             android:id="@+id/labelCounter"
-            android:layout_width="74dp"
-            android:layout_height="0dp"
-            android:layout_marginEnd="16dp"
+            android:layout_width="83dp"
+            android:layout_height="23dp"
+            android:layout_marginEnd="8dp"
             android:layout_marginTop="16dp"
             android:text="@{String.valueOf(viewModel.content.length)}"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:textAlignment="textEnd"
+            app:layout_constraintBottom_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/editInReplyTo"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
 
         <EditText
             android:id="@+id/editCategory"
@@ -84,6 +87,24 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/content" />
+
+        <EditText
+            android:id="@+id/editInReplyTo"
+            android:layout_width="0dp"
+            android:layout_height="46dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:background="@android:color/background_light"
+            android:ems="10"
+            android:hint="In reply to"
+            android:inputType="textUri"
+            android:singleLine="true"
+            android:text="@={viewModel.inReplyTo}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/labelCounter" />
 
     </android.support.constraint.ConstraintLayout>
 
