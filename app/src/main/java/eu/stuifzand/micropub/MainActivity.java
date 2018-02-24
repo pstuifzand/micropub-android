@@ -23,6 +23,7 @@ import android.widget.Toast;
 import java.io.IOException;
 
 import eu.stuifzand.micropub.databinding.ActivityMainBinding;
+import okhttp3.HttpUrl;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -36,6 +37,19 @@ public class MainActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        Intent intent = getIntent();
+        if (intent != null) {
+            String urlOrNote = intent.getStringExtra(Intent.EXTRA_TEXT);
+            if (urlOrNote != null) {
+                HttpUrl url = HttpUrl.parse(urlOrNote);
+                if (url != null) {
+                    model.inReplyTo.set(urlOrNote);
+                } else {
+                    model.content.set(urlOrNote);
+                }
+            }
+        }
 
 //        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 //        fab.setOnClickListener(new View.OnClickListener() {
