@@ -18,6 +18,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -34,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
         ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         PostViewModel model = ViewModelProviders.of(MainActivity.this).get(PostViewModel.class);
         binding.setViewModel(model);
-
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
