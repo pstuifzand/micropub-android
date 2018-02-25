@@ -24,6 +24,8 @@ import android.widget.Toast;
 import java.io.IOException;
 
 import eu.stuifzand.micropub.databinding.ActivityMainBinding;
+import eu.stuifzand.micropub.eu.stuifzand.micropub.client.Client;
+import eu.stuifzand.micropub.eu.stuifzand.micropub.client.Post;
 import okhttp3.HttpUrl;
 
 public class MainActivity extends AppCompatActivity {
@@ -132,8 +134,14 @@ public class MainActivity extends AppCompatActivity {
 
                     if (micropubBackend != null) {
                         Log.i("micropub", "Sending message to " + micropubBackend);
-                        new PostMessageTask(MainActivity.this, token, model, micropubBackend)
-                                .execute();
+                        Client client = new Client(getApplication());
+                        client.getResponse().observe(MainActivity.this, response -> {
+                            Log.i("micropub", "response received " + response.isSuccess());
+                            if (response.isSuccess()) {
+                                model.clear();
+                            }
+                        });
+                        client.createPost(new Post(null, model.content.get(), model.category.get(), HttpUrl.parse(model.inReplyTo.get())), token, HttpUrl.parse(micropubBackend));
                     }
                 }
 
