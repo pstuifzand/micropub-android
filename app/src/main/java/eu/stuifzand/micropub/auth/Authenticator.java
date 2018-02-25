@@ -1,4 +1,4 @@
-package eu.stuifzand.micropub.eu.stuifzand.micropub.auth;
+package eu.stuifzand.micropub.auth;
 
 import android.accounts.AbstractAccountAuthenticator;
 import android.accounts.Account;
@@ -12,8 +12,6 @@ import android.text.TextUtils;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-
-import org.w3c.dom.Text;
 
 import java.io.IOException;
 

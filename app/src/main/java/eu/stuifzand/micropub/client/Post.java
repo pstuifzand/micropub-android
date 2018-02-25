@@ -1,35 +1,39 @@
-package eu.stuifzand.micropub.eu.stuifzand.micropub.client;
+package eu.stuifzand.micropub.client;
 
 import okhttp3.HttpUrl;
 
 public class Post {
     private String name;
     private String content;
-    private String[] categories;
     private HttpUrl inReplyTo;
+    private String[] categories;
+    private String[] syndicationUids;
 
     public Post(String content) {
         this.content = content;
         this.categories = new String[]{};
+        this.syndicationUids = new String[]{};
     }
 
     public Post(String name, String content) {
         this.name = name;
         this.content = content;
         this.categories = new String[]{};
+        this.syndicationUids = new String[]{};
     }
 
     public Post(String name, String content, String categories) {
         this.name = name;
         this.content = content;
         this.categories = categories.split("\\s+");
+        this.syndicationUids = new String[]{};
     }
 
     public Post(String name, String content, String categories, HttpUrl inReplyTo) {
         this(name, content, categories);
         this.inReplyTo = inReplyTo;
+        this.syndicationUids = new String[]{};
     }
-
 
     public String getContent() {
         return content;
@@ -38,6 +42,7 @@ public class Post {
     public boolean hasName() {
         return this.name != null && !name.equals("");
     }
+
     public String getName() {
         return this.name;
     }
@@ -52,5 +57,13 @@ public class Post {
 
     public String[] getCategories() {
         return categories;
+    }
+
+    public void setSyndicationUids(String[] syndicationUids) {
+        this.syndicationUids = syndicationUids;
+    }
+
+    public String[] getSyndicationUids() {
+        return syndicationUids;
     }
 }

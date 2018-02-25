@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="eu.stuifzand.micropub.eu.stuifzand.micropub.auth.WebSigninActivity">
+    tools:context="eu.stuifzand.micropub.auth.WebSigninActivity">
 
     <WebView
         android:id="@+id/webview"

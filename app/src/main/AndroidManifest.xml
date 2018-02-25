@@ -42,12 +42,12 @@
                 <data android:mimeType="image/*"/>
             </intent-filter>
         </activity>
-        <activity android:name=".eu.stuifzand.micropub.auth.WebSigninActivity" />
-        <activity android:name=".eu.stuifzand.micropub.auth.AuthenticationActivity" />
+        <activity android:name=".auth.WebSigninActivity" />
+        <activity android:name=".auth.AuthenticationActivity" />
         <activity android:name=".eu.stuifzand.micropub.auth.AccountsActivity" />
 
         <service
-            android:name=".eu.stuifzand.micropub.auth.AuthenticatorService"
+            android:name=".auth.AuthenticatorService"
             android:enabled="true"
             android:exported="true">
             <intent-filter>

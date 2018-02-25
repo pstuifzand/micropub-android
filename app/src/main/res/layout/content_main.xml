@@ -8,17 +8,20 @@
         <variable
             name="viewModel"
             type="eu.stuifzand.micropub.PostViewModel" />
+
+        <variable
+            name="client"
+            type="eu.stuifzand.micropub.client.Client" />
     </data>
 
 
     <ScrollView
-        tools:context="eu.stuifzand.micropub.MainActivity"
-        tools:showIn="@layout/activity_main"
-        android:layout_marginTop="56dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginTop="56dp"
         android:background="@color/colorPrimary"
-        >
+        tools:context="eu.stuifzand.micropub.MainActivity"
+        tools:showIn="@layout/activity_main">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -31,6 +34,21 @@
                 android:overScrollMode="always"
                 android:scrollbars="vertical"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+                <TextView
+                    android:id="@+id/labelCounter"
+                    android:layout_width="83dp"
+                    android:layout_height="23dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginTop="16dp"
+                    android:gravity="end"
+                    android:text="@{String.valueOf(viewModel.content.length)}"
+                    android:textAlignment="textEnd"
+                    app:layout_constraintBottom_toTopOf="parent"
+                    app:layout_constraintEnd_toEndOf="@id/editInReplyTo"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.0" />
 
                 <EditText
                     android:id="@+id/editInReplyTo"
@@ -50,22 +68,27 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/labelCounter" />
+                    app:layout_constraintTop_toBottomOf="@id/labelCounter" />
 
-                <TextView
-                    android:id="@+id/labelCounter"
-                    android:layout_width="83dp"
-                    android:layout_height="23dp"
+                <EditText
+                    android:id="@+id/content"
+                    android:layout_width="0dp"
+                    android:layout_height="230dp"
                     android:layout_marginEnd="8dp"
-                    android:layout_marginTop="16dp"
-                    android:text="@{String.valueOf(viewModel.content.length)}"
-                    android:textAlignment="textEnd"
-                    app:layout_constraintBottom_toTopOf="parent"
-                    app:layout_constraintEnd_toEndOf="@+id/editInReplyTo"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.0"
-                    android:layout_marginRight="8dp"
-                    android:gravity="end" />
+                    android:layout_marginStart="8dp"
+                    android:ems="10"
+                    android:gravity="top"
+                    android:hint="Content"
+                    android:imeOptions="actionNext"
+                    android:inputType="textMultiLine"
+                    android:nextFocusForward="@id/editCategory"
+                    android:padding="3dp"
+                    android:singleLine="false"
+                    android:text="@={viewModel.content}"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/editInReplyTo"
+                    tools:layout_editor_absoluteY="101dp" />
 
                 <EditText
                     android:id="@+id/editCategory"
@@ -83,7 +106,26 @@
                     android:text="@={viewModel.category}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/content" />
+                    app:layout_constraintTop_toBottomOf="@id/content" />
+
+                <LinearLayout
+                    android:id="@+id/listLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="12dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/editCategory">
+
+                    <ListView
+                        android:id="@+id/listSyndication"
+                        android:layout_width="match_parent"
+                        android:layout_height="100dp"
+                        app:list="@{client.syndicates}" />
+
+                </LinearLayout>
 
                 <Button
                     android:id="@+id/btnPost"
@@ -91,34 +133,13 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
                     android:layout_marginRight="8dp"
-                    android:layout_marginTop="8dp"
                     android:onClick="sendPost"
                     android:text="Post"
-                    app:layout_constraintEnd_toEndOf="@+id/editCategory"
-                    app:layout_constraintTop_toBottomOf="@+id/editCategory" />
+                    app:layout_constraintEnd_toEndOf="@id/editCategory"
+                    app:layout_constraintTop_toBottomOf="@id/listLayout"
+                    tools:layout_editor_absoluteY="445dp" />
 
-                <EditText
-                    android:id="@+id/content"
-                    android:layout_width="0dp"
-                    android:layout_height="230dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
-                    android:ems="10"
-                    android:gravity="top"
-                    android:hint="Content"
-                    android:imeOptions="actionNext"
-                    android:inputType="textMultiLine"
-                    android:nextFocusForward="@id/editCategory"
-                    android:padding="3dp"
-                    android:singleLine="false"
-                    android:text="@={viewModel.content}"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/editInReplyTo" />
             </android.support.constraint.ConstraintLayout>
         </LinearLayout>
     </ScrollView>
-
-
 </layout>

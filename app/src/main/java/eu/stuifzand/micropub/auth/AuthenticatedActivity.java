@@ -1,4 +1,4 @@
-package eu.stuifzand.micropub.eu.stuifzand.micropub.auth;
+package eu.stuifzand.micropub.auth;
 
 import android.content.Intent;
 import android.os.Bundle;

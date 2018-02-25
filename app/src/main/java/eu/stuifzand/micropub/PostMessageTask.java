@@ -57,7 +57,6 @@ public class PostMessageTask extends AsyncTask<String, Void, String> {
                 .addInterceptor(logging)
                 .build();
 
-
         String msg;
         Call call = client.newCall(request);
         Response response = null;

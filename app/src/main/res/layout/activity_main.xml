@@ -7,6 +7,10 @@
         <variable
             name="viewModel"
             type="eu.stuifzand.micropub.PostViewModel" />
+
+        <variable
+            name="client"
+            type="eu.stuifzand.micropub.client.Client" />
     </data>
 
     <android.support.design.widget.CoordinatorLayout
@@ -32,7 +36,9 @@
             layout="@layout/content_main"
             android:layout_height="607dp"
             app:viewModel="@{viewModel}"
-            tools:layout_editor_absoluteY="-4dp" />
+            app:client="@{client}"
+            tools:layout_editor_absoluteY="-4dp"
+            android:layout_width="match_parent" />
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab"

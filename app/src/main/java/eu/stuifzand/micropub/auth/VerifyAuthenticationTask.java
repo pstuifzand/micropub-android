@@ -1,8 +1,7 @@
-package eu.stuifzand.micropub.eu.stuifzand.micropub.auth;
+package eu.stuifzand.micropub.auth;
 
 import android.accounts.AccountAuthenticatorResponse;
 import android.accounts.AccountManager;
-import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;

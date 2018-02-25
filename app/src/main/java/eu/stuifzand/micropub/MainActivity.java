@@ -6,26 +6,27 @@ import android.accounts.AccountManagerCallback;
 import android.accounts.AccountManagerFuture;
 import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
-import android.app.Activity;
+import android.app.Application;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Toast;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import eu.stuifzand.micropub.databinding.ActivityMainBinding;
-import eu.stuifzand.micropub.eu.stuifzand.micropub.client.Client;
-import eu.stuifzand.micropub.eu.stuifzand.micropub.client.Post;
+import eu.stuifzand.micropub.client.Client;
+import eu.stuifzand.micropub.client.Post;
+import eu.stuifzand.micropub.client.Syndication;
 import okhttp3.HttpUrl;
 
 public class MainActivity extends AppCompatActivity {
@@ -36,7 +37,9 @@ public class MainActivity extends AppCompatActivity {
 //        setContentView(R.layout.activity_main);
         ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         PostViewModel model = ViewModelProviders.of(MainActivity.this).get(PostViewModel.class);
+        Client client = ViewModelProviders.of(MainActivity.this).get(Client.class);
         binding.setViewModel(model);
+        binding.setClient(client);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -63,6 +66,15 @@ public class MainActivity extends AppCompatActivity {
 //            }
 //        });
 
+        TokenReady callback = (accountType, accountName, token) -> {
+            Log.i("micropub", "TokenReady called " + accountType + " " + accountName + " " + token);
+            client.setToken(accountType, accountName, token);
+            client.loadSyndicates();
+        };
+
+        AccountManager am = AccountManager.get(this);
+        Bundle options = new Bundle();
+        am.getAuthTokenByFeatures("Indieauth", "token", null, this, options, null, new OnTokenAcquired(callback), null);
     }
 
     @Override
@@ -84,8 +96,6 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
         if (id == R.id.action_send) {
-//            EditText mEdit   = (EditText)findViewById(R.id.editContent);
-//            new PostMessageTask(this.findViewById(R.id.editContent)).execute("http://192.168.178.21:5000/micropub", mEdit.getText().toString());
         }
 
         return super.onOptionsItemSelected(item);
@@ -94,14 +104,51 @@ public class MainActivity extends AppCompatActivity {
     public void sendPost(View view) {
         AccountManager am = AccountManager.get(this);
         Bundle options = new Bundle();
-        am.getAuthTokenByFeatures("Indieauth", "token", null, this, options, null, new OnTokenAcquired(true), null);
+        TokenReady callback = new TokenReady() {
+            @Override
+            public void tokenReady(String accountType, String accountName, String token) {
+
+                PostViewModel model = ViewModelProviders.of(MainActivity.this).get(PostViewModel.class);
+                AccountManager am = AccountManager.get(MainActivity.this);
+                Account[] accounts = am.getAccountsByType(accountType);
+
+                String micropubBackend = null;
+                for (Account account : accounts) {
+                    if (account.name.equals(accountName)) {
+                        micropubBackend = am.getUserData(account, "micropub");
+                    }
+                }
+
+                if (micropubBackend != null) {
+                    Log.i("micropub", "Sending message to " + micropubBackend);
+                    Client client = ViewModelProviders.of(MainActivity.this).get(Client.class);
+                    client.getResponse().observe(MainActivity.this, response -> {
+                        Log.i("micropub", "response received " + response.isSuccess());
+                        if (response.isSuccess()) {
+                            model.clear();
+                        }
+                    });
+                    Post post = new Post(null, model.content.get(), model.category.get(), HttpUrl.parse(model.inReplyTo.get()));
+                    List<String> uids = new ArrayList<String>();
+                    for (Syndication s : client.syndicates) {
+                        if (s.checked.get()) {
+                            uids.add(s.uid.get());
+                        }
+                    }
+                    post.setSyndicationUids(uids.toArray(new String[uids.size()]));
+                    client.createPost(post, token, HttpUrl.parse(micropubBackend));
+                }
+            }
+        };
+
+        am.getAuthTokenByFeatures("Indieauth", "token", null, this, options, null, new OnTokenAcquired(callback), null);
     }
 
-    private class OnTokenAcquired implements AccountManagerCallback<Bundle> {
-        private boolean sendMessage;
+    public class OnTokenAcquired implements AccountManagerCallback<Bundle> {
+        private final TokenReady callback;
 
-        public OnTokenAcquired(boolean sendMessage) {
-            this.sendMessage = sendMessage;
+        public OnTokenAcquired(TokenReady callback) {
+            this.callback = callback;
         }
 
         @Override
@@ -111,41 +158,15 @@ public class MainActivity extends AppCompatActivity {
                 Bundle bundle = result.getResult();
                 Intent launch = (Intent) bundle.get(AccountManager.KEY_INTENT);
                 if (launch != null) {
-                    startActivityForResult(launch, 0);
+                    MainActivity.this.startActivityForResult(launch, 0);
                     return;
                 }
 
                 // The token is a named value in the bundle. The name of the value
                 // is stored in the constant AccountManager.KEY_AUTHTOKEN.
                 String token = bundle.getString(AccountManager.KEY_AUTHTOKEN);
-
-                if (sendMessage) {
-                    PostViewModel model = ViewModelProviders.of(MainActivity.this).get(PostViewModel.class);
-                    AccountManager am = AccountManager.get(MainActivity.this);
-                    Account[] accounts = am.getAccountsByType(bundle.getString("accountType"));
-                    String accountName = bundle.getString("authAccount");
-
-                    String micropubBackend = null;
-                    for (Account account : accounts) {
-                        if (account.name.equals(accountName)) {
-                            micropubBackend = am.getUserData(account, "micropub");
-                        }
-                    }
-
-                    if (micropubBackend != null) {
-                        Log.i("micropub", "Sending message to " + micropubBackend);
-                        Client client = new Client(getApplication());
-                        client.getResponse().observe(MainActivity.this, response -> {
-                            Log.i("micropub", "response received " + response.isSuccess());
-                            if (response.isSuccess()) {
-                                model.clear();
-                            }
-                        });
-                        client.createPost(new Post(null, model.content.get(), model.category.get(), HttpUrl.parse(model.inReplyTo.get())), token, HttpUrl.parse(micropubBackend));
-                    }
-                }
-
                 Log.d("micropub", "GetTokenForAccount Bundle is " + token);
+                callback.tokenReady(bundle.getString("accountType"), bundle.getString("authAccount"), token);
             } catch (OperationCanceledException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -155,23 +176,4 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
-    public void startSignin(View view) {
-        AccountManager am = AccountManager.get(this);
-        Bundle options = new Bundle();
-        am.getAuthTokenByFeatures("Indieauth", "token", null, this, options, null, new OnTokenAcquired(false), null);
-    }
-
-    private void showMessage(final String msg) {
-        if (TextUtils.isEmpty(msg))
-            return;
-
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(getBaseContext(), msg, Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
 }

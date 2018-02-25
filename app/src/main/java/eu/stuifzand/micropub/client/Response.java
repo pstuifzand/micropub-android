@@ -1,4 +1,4 @@
-package eu.stuifzand.micropub.eu.stuifzand.micropub.client;
+package eu.stuifzand.micropub.client;
 
 public class Response {
     private boolean success;
