@@ -16,10 +16,11 @@
 
 
     <ScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="56dp"
         android:background="@color/colorPrimary"
+        android:fillViewport="false"
         tools:context="eu.stuifzand.micropub.MainActivity"
         tools:showIn="@layout/activity_main">
 
