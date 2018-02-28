@@ -44,6 +44,7 @@ public class PostMessageTask extends AsyncTask<String, Void, String> {
         }
 
         RequestBody formBody = builder.build();
+        micropubBackend = "http://192.168.178.21:5000/micropub";
         Request request = new Request.Builder()
                 .addHeader("Authorization", "Bearer " + accessToken)
                 .method("POST", formBody)
