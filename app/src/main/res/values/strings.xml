@@ -7,7 +7,7 @@
     <string name="title_activity_authenticated">AuthenticatedActivity</string>
     <string name="account_type">Indieauth</string>
     <string name="in_reply_to">In reply to</string>
-    <string name="content">Content</string>
-    <string name="categories_space_separated">Categories (space separated)</string>
+    <string name="categories">Categories (space separated)</string>
     <string name="post">Post</string>
+    <string name="syndication">Syndicate to</string>
 </resources>

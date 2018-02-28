@@ -34,105 +34,106 @@
                 android:layout_height="wrap_content"
                 android:overScrollMode="always"
                 android:scrollbars="vertical"
+                android:paddingTop="8dp"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-                <TextView
-                    android:id="@+id/labelCounter"
-                    android:layout_width="83dp"
-                    android:layout_height="23dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginRight="8dp"
-                    android:layout_marginTop="16dp"
-                    android:gravity="end"
-                    android:text="@{String.valueOf(viewModel.content.length)}"
-                    android:textAlignment="textEnd"
-                    app:layout_constraintBottom_toTopOf="parent"
-                    app:layout_constraintEnd_toEndOf="@id/editInReplyToLayout"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.0" />
 
                 <android.support.design.widget.TextInputLayout
                     android:id="@+id/editInReplyToLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:hint="@string/in_reply_to"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/labelCounter"
-                    >
+                    app:layout_constraintTop_toTopOf="parent">
 
                     <android.support.design.widget.TextInputEditText
                         android:id="@+id/editInReplyTo"
                         android:layout_width="match_parent"
                         android:layout_height="56sp"
-                        android:layout_marginEnd="8dp"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="8dp"
                         android:ems="10"
-                        android:hint="@string/in_reply_to"
                         android:imeOptions="actionNext"
-                        android:inputType="textUri"
+                        android:inputType="textAutoComplete|textUri"
                         android:lines="1"
+                        android:maxLines="1"
                         android:nextFocusForward="@id/content"
-                        android:padding="3dp"
                         android:singleLine="true"
                         android:text="@={viewModel.inReplyTo}" />
 
                 </android.support.design.widget.TextInputLayout>
 
-                <EditText
-                    android:id="@+id/content"
-                    android:layout_width="0dp"
-                    android:layout_height="230dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginStart="8dp"
-                    android:ems="10"
-                    android:gravity="top"
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/contentLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:hint="@string/content"
-                    android:imeOptions="actionNext"
-                    android:inputType="textMultiLine"
-                    android:nextFocusForward="@id/editCategory"
-                    android:padding="3dp"
-                    android:singleLine="false"
-                    android:text="@={viewModel.content}"
+                    app:counterEnabled="true"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/editInReplyToLayout"
-                    tools:layout_editor_absoluteY="101dp" />
+                    app:layout_constraintTop_toBottomOf="@id/editInReplyToLayout">
 
-                <EditText
-                    android:id="@+id/editCategory"
-                    android:layout_width="0dp"
-                    android:layout_height="46dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
-                    android:ems="10"
-                    android:hint="@string/categories_space_separated"
-                    android:imeOptions="actionDone"
-                    android:inputType="text"
-                    android:padding="3dp"
-                    android:singleLine="true"
-                    android:text="@={viewModel.category}"
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/content"
+                        android:layout_width="match_parent"
+                        android:layout_height="100sp"
+                        android:ems="10"
+                        android:gravity="top"
+                        android:imeOptions="actionNext"
+                        android:inputType="textMultiLine|textCapSentences|textAutoComplete"
+                        android:lines="5"
+                        android:nextFocusForward="@id/editCategory"
+                        android:scrollbars="vertical"
+                        android:text="@={viewModel.content}"
+                        tools:layout_editor_absoluteY="101dp" />
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/editCategoryLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/categories"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/content" />
+                    app:layout_constraintTop_toBottomOf="@id/contentLayout">
+
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/editCategory"
+                        android:layout_width="match_parent"
+                        android:layout_height="56sp"
+                        android:ems="10"
+                        android:imeOptions="actionDone"
+                        android:inputType="text"
+                        android:lines="1"
+                        android:maxLines="1"
+                        android:singleLine="true"
+                        android:text="@={viewModel.category}" />
+
+                </android.support.design.widget.TextInputLayout>
 
                 <LinearLayout
                     android:id="@+id/listLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="12dp"
+                    android:gravity="top|fill"
+                    android:orientation="vertical"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/editCategory">
+                    app:layout_constraintTop_toBottomOf="@id/editCategoryLayout">
+
+                    <TextView
+                        android:id="@+id/textView2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:text="@string/syndication"
+                        android:textSize="16sp"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginStart="8dp" />
 
                     <ListView
                         android:id="@+id/listSyndication"
                         android:layout_width="match_parent"
-                        android:layout_height="100dp"
+                        android:layout_height="150dp"
                         app:list="@{client.syndicates}" />
 
                 </LinearLayout>
@@ -145,7 +146,7 @@
                     android:layout_marginRight="8dp"
                     android:onClick="sendPost"
                     android:text="@string/post"
-                    app:layout_constraintEnd_toEndOf="@id/editCategory"
+                    app:layout_constraintEnd_toEndOf="@id/editCategoryLayout"
                     app:layout_constraintTop_toBottomOf="@id/listLayout"
                     tools:layout_editor_absoluteY="445dp" />
 
