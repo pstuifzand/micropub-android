@@ -43,7 +43,7 @@ dependencies {
     annotationProcessor "android.arch.lifecycle:compiler:1.1.0"
     // Java8 support for Lifecycles
     implementation 'android.arch.lifecycle:common-java8:1.1.0'
-    implementation 'org.jsoup:jsoup:1.10.1'
+    implementation 'org.jsoup:jsoup:1.11.2'
     implementation 'com.google.code.gson:gson:2.8.2'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'

@@ -8,12 +8,19 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 
+import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.regex.MatchResult;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class WebsigninTask extends AsyncTask<String, Void, Bundle> {
@@ -33,27 +40,53 @@ public class WebsigninTask extends AsyncTask<String, Void, Bundle> {
 
     @Override
     protected Bundle doInBackground(String... strings) {
+        Log.i("micropub", "Starting WebsigninTask.doInBackground");
         Bundle bundle = new Bundle();
+        HashMap<String,String> linkHeaders = new HashMap<>();
         try {
             bundle.putString(ME, strings[0]);
-            Document doc = Jsoup.connect(strings[0]).get();
-            Elements links = doc.select("link");
-            for (Element link : links) {
-                String rel = link.attr("rel");
-                if (rel.equals("authorization_endpoint")) {
-                    bundle.putString(rel, link.attr("href"));
-                }
-                else if (rel .equals("token_endpoint")) {
-                    bundle.putString(rel, link.attr("href"));
-                }
-                else if (rel.equals("micropub")) {
-                    bundle.putString(rel, link.attr("href"));
+            Connection conn = Jsoup.connect(strings[0]);
+            Document doc = conn.get();
+            Connection.Response resp = conn.response();
+
+            List<String> headers = resp.headers("Link");
+            Pattern linkParser = Pattern.compile("<([^>]+)>;\\s+rel=\"([^\"]+)\"");
+
+            for (String header : headers) {
+                Log.d("micropub", header);
+                Matcher matcher = linkParser.matcher(header);
+                while (matcher.find()) {
+                    MatchResult results = matcher.toMatchResult();
+
+                    String url = results.group(1);
+                    String rel = results.group(2);
+
+                    Log.d("micropub", "Found url=" + url + " and rel=" + rel);
+                    if (!rel.isEmpty() && !linkHeaders.containsKey(rel)) {
+                        linkHeaders.put(rel, url);
+                    }
                 }
             }
 
+            Elements links = doc.select("link");
+            for (Element link : links) {
+                String rel = link.attr("rel");
+                if (!rel.isEmpty() && !linkHeaders.containsKey(rel)) {
+                    linkHeaders.put(rel, link.attr("href"));
+                }
+            }
         } catch (IOException e) {
             return bundle;
         }
+
+        String[] rels = new String[]{"authorization_endpoint","token_endpoint","micropub"};
+
+        for (String rel : rels) {
+            if (linkHeaders.containsKey(rel)) {
+                bundle.putString(rel, linkHeaders.get(rel));
+            }
+        }
+
         Log.i("micropub", bundle.toString());
         return bundle;
     }
