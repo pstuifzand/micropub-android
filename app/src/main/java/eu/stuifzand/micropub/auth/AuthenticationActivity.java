@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
+import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -40,17 +41,24 @@ public class AuthenticationActivity extends AccountAuthenticatorActivity {
         WebView webview = findViewById(R.id.webview);
         WebSettings webSettings = webview.getSettings();
         webSettings.setJavaScriptEnabled(true);
-
+        webSettings.setDomStorageEnabled(true);
+        webSettings.setUserAgentString(getString(R.string.user_agent));
         HttpUrl.Builder builder = HttpUrl.parse(endpoint).newBuilder();
         builder.setQueryParameter("me", me)
                 .setQueryParameter("client_id", "https://stuifzand.eu/micropub")
                 .setQueryParameter("redirect_uri", "https://stuifzand.eu/micropub-auth")
                 .setQueryParameter("response_type", "code")
-                .setQueryParameter("state", "1234")
-                .setQueryParameter("scope", "create edit update post delete");
-        Log.i("micropub", builder.toString());
+                .setQueryParameter("state", "1234") // @TODO use random states, check the state later
+                .setQueryParameter("scope", "create edit update post delete"); // @TODO use different scope
+        Log.i("micropub", "LoadUrl: " + builder.toString());
         webview.loadUrl(builder.toString());
         webview.setWebViewClient(new WebViewClient() {
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+            @Override
+            public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
+                Log.i("micropub", request.getMethod()+ " "+request.getUrl());
+                Log.i("micropub", error.toString());
+            }
 
             @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             public boolean shouldOverrideUrlLoading(WebView viewx, WebResourceRequest request) {

@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -93,12 +94,14 @@ public class Authenticator extends AbstractAccountAuthenticator {
             Response tokenResponse = null;
             try {
                 tokenResponse = call.execute();
-                ResponseBody body = tokenResponse.body();
-                JsonParser parser = new JsonParser();
-                JsonObject element = parser.parse(body.string()).getAsJsonObject();
-                authToken = element.get("access_token").getAsString();
+                if (tokenResponse.isSuccessful()) {
+                    ResponseBody body = tokenResponse.body();
+                    JsonParser parser = new JsonParser();
+                    JsonObject element = parser.parse(body.string()).getAsJsonObject();
+                    authToken = element.get("access_token").getAsString();
+                }
             } catch (IOException e) {
-
+                Log.e("micropub", "Failed getting token response", e);
             } finally {
                 if (tokenResponse != null) {
                     tokenResponse.close();

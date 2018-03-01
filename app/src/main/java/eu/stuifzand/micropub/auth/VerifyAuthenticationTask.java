@@ -6,7 +6,9 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 
 import java.io.IOException;
@@ -25,14 +27,31 @@ public class VerifyAuthenticationTask extends AsyncTask<String, Void, VerifyAuth
     private final AuthenticationActivity activity;
 
     public class AuthenticationResult {
+        private boolean success;
+        private String errorMessage;
+
         public String me;
         public String scope;
         public String code;
 
+        public AuthenticationResult(String errorMessage) {
+            this.success = false;
+            this.errorMessage = errorMessage;
+        }
+
         public AuthenticationResult(String me, String scope, String code) {
+            this.success = true;
             this.me = me;
             this.scope = scope;
             this.code = code;
+        }
+
+        public boolean isSuccessful() {
+            return this.success;
+        }
+
+        public String getErrorMessage() {
+            return errorMessage;
         }
     }
 
@@ -52,24 +71,47 @@ public class VerifyAuthenticationTask extends AsyncTask<String, Void, VerifyAuth
                 .add("redirect_uri", "https://stuifzand.eu/micropub-auth")
                 .add("client_id", "https://stuifzand.eu/micropub")
                 .build();
+
         Request request = new Request.Builder()
                 .addHeader("Accept", "application/json")
-                .url(args[0])
+                .url(endpoint)
                 .method("POST", formBody)
                 .build();
 
         OkHttpClient client = new OkHttpClient();
-        String msg;
         Call call = client.newCall(request);
         Response response = null;
         try {
             response = call.execute();
+            if (!response.isSuccessful()) {
+                return new AuthenticationResult("Unsuccessful response from authorization_endpoint: HTTP status code is " + String.valueOf(response.code()));
+            }
             ResponseBody body = response.body();
+            if (!response.header("Content-Type").contains("application/json")) {
+                return new AuthenticationResult("Unsupported content type of authorization_endpoint response: " + response.header("Content-Type"));
+            }
+
             JsonParser parser = new JsonParser();
-            JsonObject element = parser.parse(body.string()).getAsJsonObject();
-            return new AuthenticationResult(element.get("me").getAsString(), element.get("scope").getAsString(), code);
+            try {
+                JsonElement jsonElement = parser.parse(body.string());
+                JsonObject element = jsonElement.getAsJsonObject();
+
+                JsonElement meElement = element.get("me");
+                if (meElement == null) {
+                    return new AuthenticationResult("Missing element \"me\" in authorization_endpoint response");
+                }
+                String resultMe = meElement.getAsString();
+                JsonElement scopeElement = element.get("scope");
+                if (scopeElement == null) {
+                    return new AuthenticationResult("Missing element \"scope\" in authorization_endpoint response");
+                }
+                String resultScope = scopeElement.getAsString();
+                return new AuthenticationResult(resultMe, resultScope, code);
+            } catch (JsonParseException e) {
+                return new AuthenticationResult("Could not parse json response from authorization_endpoint");
+            }
         } catch (IOException e) {
-            return null;
+            return new AuthenticationResult("Could not get the response from the endpoint");
         } finally {
             if (response != null) {
                 response.close();
@@ -78,13 +120,17 @@ public class VerifyAuthenticationTask extends AsyncTask<String, Void, VerifyAuth
     }
 
     protected void onPostExecute(AuthenticationResult message) {
-        Bundle bundle = new Bundle();
-        bundle.putString(AccountManager.KEY_ACCOUNT_NAME, message.me);
-        bundle.putString(AccountManager.KEY_ACCOUNT_TYPE, "Indieauth");
-        bundle.putString(AuthenticationActivity.PARAM_USER_PASS, message.code);
-        Intent intent = new Intent();
-        intent.putExtras(bundle);
-        this.activity.finishLogin(intent);
-        this.response.onResult(bundle);
+        if (message.isSuccessful()) {
+            Bundle bundle = new Bundle();
+            bundle.putString(AccountManager.KEY_ACCOUNT_NAME, message.me);
+            bundle.putString(AccountManager.KEY_ACCOUNT_TYPE, "Indieauth");
+            bundle.putString(AuthenticationActivity.PARAM_USER_PASS, message.code);
+            Intent intent = new Intent();
+            intent.putExtras(bundle);
+            this.activity.finishLogin(intent);
+            this.response.onResult(bundle);
+        } else {
+            this.response.onError(1, "Could not verify authorization: " + message.getErrorMessage());
+        }
     }
 }
