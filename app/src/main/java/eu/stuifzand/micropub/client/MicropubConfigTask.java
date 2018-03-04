@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 
 import java.io.IOException;
 
@@ -53,6 +54,8 @@ class MicropubConfigTask extends AsyncTask<String, Void, String> {
             }
         } catch (IOException e) {
             Log.e("micropub", "Error while getting syndicate-to", e);
+        } catch (JsonSyntaxException e) {
+            Log.e("micropub", "Error while getting parsing json response", e);
         } finally {
             if (httpResponse != null) {
                 httpResponse.close();

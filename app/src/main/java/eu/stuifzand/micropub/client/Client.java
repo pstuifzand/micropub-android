@@ -1,17 +1,14 @@
 package eu.stuifzand.micropub.client;
 
-import android.app.Application;
-import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.ViewModel;
 import android.databinding.ObservableArrayList;
 import android.support.annotation.NonNull;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-
-import org.apache.http.params.HttpParams;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +18,7 @@ import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 
-public class Client extends AndroidViewModel {
+public class Client extends ViewModel {
     private final OkHttpClient httpClient;
 
     private MutableLiveData<Response> response = new MutableLiveData<>();
@@ -33,9 +30,7 @@ public class Client extends AndroidViewModel {
     private String token;
     private HttpUrl mediaEndpoint;
 
-    public Client(@NonNull Application application) {
-        super(application);
-
+    public Client() {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
 
@@ -117,5 +112,9 @@ public class Client extends AndroidViewModel {
 
     public void setMediaEndpoint(String mediaEndpoint) {
         this.mediaEndpoint = HttpUrl.parse(mediaEndpoint);
+    }
+
+    public String getMediaEndpoint() {
+        return this.mediaEndpoint.toString();
     }
 }

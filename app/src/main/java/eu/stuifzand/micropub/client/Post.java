@@ -27,6 +27,9 @@ public class Post {
         this.name = name;
         this.content = content;
         this.categories = categories.split("\\s+");
+        if (this.categories.length == 1 && this.categories[0].length() == 0) {
+            this.categories = new String[]{};
+        }
         this.syndicationUids = new String[]{};
     }
 
