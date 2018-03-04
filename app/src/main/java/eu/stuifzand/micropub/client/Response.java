@@ -24,4 +24,8 @@ public class Response {
     public boolean isSuccess() {
         return success;
     }
+
+    public String getUrl() {
+        return url;
+    }
 }

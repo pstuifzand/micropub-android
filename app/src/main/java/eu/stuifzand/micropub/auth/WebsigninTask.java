@@ -22,6 +22,8 @@ import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import okhttp3.HttpUrl;
+
 
 public class WebsigninTask extends AsyncTask<String, Void, Bundle> {
     public static final String ME = "eu.stuifzand.micropub.ME";
@@ -42,10 +44,11 @@ public class WebsigninTask extends AsyncTask<String, Void, Bundle> {
     protected Bundle doInBackground(String... strings) {
         Log.i("micropub", "Starting WebsigninTask.doInBackground");
         Bundle bundle = new Bundle();
-        HashMap<String,String> linkHeaders = new HashMap<>();
+        HashMap<String, String> linkHeaders = new HashMap<>();
         try {
-            bundle.putString(ME, strings[0]);
-            Connection conn = Jsoup.connect(strings[0]);
+            String profileUrl = strings[0];
+            bundle.putString(ME, profileUrl);
+            Connection conn = Jsoup.connect(profileUrl);
             Document doc = conn.get();
             Connection.Response resp = conn.response();
 
@@ -61,9 +64,12 @@ public class WebsigninTask extends AsyncTask<String, Void, Bundle> {
                     String url = results.group(1);
                     String rel = results.group(2);
 
-                    Log.d("micropub", "Found url=" + url + " and rel=" + rel);
-                    if (!rel.isEmpty() && !linkHeaders.containsKey(rel)) {
-                        linkHeaders.put(rel, url);
+                    HttpUrl base = HttpUrl.parse(profileUrl);
+                    HttpUrl resolvedUrl = base.resolve(url);
+
+                    if (resolvedUrl != null && !rel.isEmpty() && !linkHeaders.containsKey(rel)) {
+                        Log.d("micropub", "Found url=" + resolvedUrl + " and rel=" + rel);
+                        linkHeaders.put(rel, resolvedUrl.toString());
                     }
                 }
             }
@@ -79,7 +85,7 @@ public class WebsigninTask extends AsyncTask<String, Void, Bundle> {
             return bundle;
         }
 
-        String[] rels = new String[]{"authorization_endpoint","token_endpoint","micropub"};
+        String[] rels = new String[]{"authorization_endpoint", "token_endpoint", "micropub"};
 
         for (String rel : rels) {
             if (linkHeaders.containsKey(rel)) {

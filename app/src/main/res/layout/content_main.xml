@@ -26,15 +26,15 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical">
 
             <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:overScrollMode="always"
-                android:scrollbars="vertical"
                 android:paddingTop="8dp"
+                android:scrollbars="vertical"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
                 <android.support.design.widget.TextInputLayout
@@ -102,7 +102,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="56sp"
                         android:ems="10"
-                        android:imeOptions="actionDone"
+                        android:imeOptions="actionNext"
                         android:inputType="text"
                         android:lines="1"
                         android:maxLines="1"
@@ -125,16 +125,16 @@
                         android:id="@+id/textView2"
                         android:layout_width="wrap_content"
                         android:layout_height="0dp"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginStart="8dp"
                         android:layout_weight="1"
                         android:text="@string/syndication"
-                        android:textSize="16sp"
-                        android:layout_marginLeft="8dp"
-                        android:layout_marginStart="8dp" />
+                        android:textSize="16sp" />
 
                     <ListView
                         android:id="@+id/listSyndication"
                         android:layout_width="match_parent"
-                        android:layout_height="150dp"
+                        android:layout_height="115dp"
                         app:list="@{client.syndicates}" />
 
                 </LinearLayout>
@@ -144,14 +144,48 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
-                    android:layout_marginRight="8dp"
+                    android:layout_marginTop="8dp"
                     android:onClick="sendPost"
                     android:text="@string/post"
                     app:layout_constraintEnd_toEndOf="@id/editCategoryLayout"
-                    app:layout_constraintTop_toBottomOf="@id/listLayout"
-                    tools:layout_editor_absoluteY="445dp" />
+                    app:layout_constraintTop_toBottomOf="@+id/editPhotoLayout" />
+
+                <Button
+                    android:id="@+id/btnGetImage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="12dp"
+                    android:layout_marginTop="8dp"
+                    android:onClick="galleryIntent"
+                    android:text="Select photo"
+                    app:layout_constraintEnd_toStartOf="@+id/btnPost"
+                    app:layout_constraintTop_toBottomOf="@+id/editPhotoLayout" />
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/editPhotoLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:hint="Photo url"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/listLayout">
+
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/editPhoto"
+                        android:layout_width="match_parent"
+                        android:layout_height="56sp"
+                        android:ems="10"
+                        android:imeOptions="actionDone"
+                        android:inputType="text"
+                        android:lines="1"
+                        android:maxLines="1"
+                        android:singleLine="true"
+                        android:text="@={viewModel.photo}" />
+                </android.support.design.widget.TextInputLayout>
 
             </android.support.constraint.ConstraintLayout>
         </LinearLayout>
+
     </ScrollView>
 </layout>

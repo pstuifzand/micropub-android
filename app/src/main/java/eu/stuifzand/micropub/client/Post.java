@@ -8,6 +8,7 @@ public class Post {
     private HttpUrl inReplyTo;
     private String[] categories;
     private String[] syndicationUids;
+    private String photo;
 
     public Post(String content) {
         this.content = content;
@@ -65,5 +66,17 @@ public class Post {
 
     public String[] getSyndicationUids() {
         return syndicationUids;
+    }
+
+    public void setPhoto(String photo) {
+        this.photo = photo;
+    }
+
+    public String getPhoto() {
+        return photo;
+    }
+
+    public boolean hasPhoto() {
+        return this.photo != null;
     }
 }

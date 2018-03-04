@@ -2,11 +2,7 @@ package eu.stuifzand.micropub;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.accounts.AccountManagerCallback;
-import android.accounts.AccountManagerFuture;
-import android.accounts.AuthenticatorException;
-import android.accounts.OperationCanceledException;
-import android.app.Application;
+import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
@@ -19,26 +15,71 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.InputStream;
 
 import eu.stuifzand.micropub.databinding.ActivityMainBinding;
 import eu.stuifzand.micropub.client.Client;
 import eu.stuifzand.micropub.client.Post;
-import eu.stuifzand.micropub.client.Syndication;
 import okhttp3.HttpUrl;
 
+import static eu.stuifzand.micropub.utils.IOUtils.getBytes;
+
 public class MainActivity extends AppCompatActivity {
+
+    private static final int SELECT_FILE = 12;
+    private AccountManager accountManager;
+
+    private Account selectedAccount;
+    private String authToken;
+    private Client client;
+    private PostViewModel postModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        accountManager = AccountManager.get(this);
+
+        AccountManager am = AccountManager.get(this);
+        Bundle options = new Bundle();
+
+        postModel = ViewModelProviders.of(MainActivity.this).get(PostViewModel.class);
+        client = ViewModelProviders.of(MainActivity.this).get(Client.class);
+
+        TokenReady callback = (accountType, accountName, token) -> {
+            Account[] accounts = accountManager.getAccountsByType(accountType);
+            if (accounts.length == 0)
+                return;
+            selectedAccount = accounts[0];
+            authToken = token;
+
+            String micropubBackend = accountManager.getUserData(selectedAccount, "micropub");
+            if (micropubBackend == null) return;
+
+            client.setToken(accountType, accountName, token);
+            client.loadConfig(HttpUrl.parse(micropubBackend));
+
+            client.getResponse().observe(MainActivity.this, response -> {
+                Log.i("micropub", "response received " + response.isSuccess());
+                if (response.isSuccess()) {
+                    postModel.clear();
+                }
+            });
+
+            client.getMediaResponse().observe(MainActivity.this, response -> {
+                Log.i("micropub", "media response received " + response.isSuccess());
+                if (response.isSuccess()) {
+                    postModel.setPhoto(response.getUrl());
+                }
+            });
+        };
+        accountManager.getAuthTokenByFeatures("Indieauth", "token", null, this, options, null, new OnTokenAcquired(this, callback), null);
+
 //        setContentView(R.layout.activity_main);
         ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
-        PostViewModel model = ViewModelProviders.of(MainActivity.this).get(PostViewModel.class);
-        Client client = ViewModelProviders.of(MainActivity.this).get(Client.class);
-        binding.setViewModel(model);
+
+        binding.setViewModel(postModel);
         binding.setClient(client);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -50,9 +91,9 @@ public class MainActivity extends AppCompatActivity {
             if (urlOrNote != null) {
                 HttpUrl url = HttpUrl.parse(urlOrNote);
                 if (url != null) {
-                    model.inReplyTo.set(urlOrNote);
+                    postModel.inReplyTo.set(urlOrNote);
                 } else {
-                    model.content.set(urlOrNote);
+                    postModel.content.set(urlOrNote);
                 }
             }
         }
@@ -65,16 +106,6 @@ public class MainActivity extends AppCompatActivity {
 //                        .setAction("Action", null).show();
 //            }
 //        });
-
-        TokenReady callback = (accountType, accountName, token) -> {
-            Log.i("micropub", "TokenReady called " + accountType + " " + accountName + " " + token);
-            client.setToken(accountType, accountName, token);
-            client.loadSyndicates();
-        };
-
-        AccountManager am = AccountManager.get(this);
-        Bundle options = new Bundle();
-        am.getAuthTokenByFeatures("Indieauth", "token", null, this, options, null, new OnTokenAcquired(callback), null);
     }
 
     @Override
@@ -104,76 +135,54 @@ public class MainActivity extends AppCompatActivity {
     public void sendPost(View view) {
         AccountManager am = AccountManager.get(this);
         Bundle options = new Bundle();
-        TokenReady callback = new TokenReady() {
-            @Override
-            public void tokenReady(String accountType, String accountName, String token) {
 
-                PostViewModel model = ViewModelProviders.of(MainActivity.this).get(PostViewModel.class);
-                AccountManager am = AccountManager.get(MainActivity.this);
-                Account[] accounts = am.getAccountsByType(accountType);
-
-                String micropubBackend = null;
-                for (Account account : accounts) {
-                    if (account.name.equals(accountName)) {
-                        micropubBackend = am.getUserData(account, "micropub");
-                    }
-                }
-
-                if (micropubBackend != null) {
-                    Log.i("micropub", "Sending message to " + micropubBackend);
-                    Client client = ViewModelProviders.of(MainActivity.this).get(Client.class);
-                    client.getResponse().observe(MainActivity.this, response -> {
-                        Log.i("micropub", "response received " + response.isSuccess());
-                        if (response.isSuccess()) {
-                            model.clear();
-                        }
-                    });
-                    Post post = new Post(null, model.content.get(), model.category.get(), HttpUrl.parse(model.inReplyTo.get()));
-                    List<String> uids = new ArrayList<String>();
-                    for (Syndication s : client.syndicates) {
-                        if (s.checked.get()) {
-                            uids.add(s.uid.get());
-                        }
-                    }
-                    post.setSyndicationUids(uids.toArray(new String[uids.size()]));
-                    client.createPost(post, token, HttpUrl.parse(micropubBackend));
-                }
+        TokenReady callback = (accountType, accountName, token) -> {
+            String micropubBackend = accountManager.getUserData(selectedAccount, "micropub");
+            if (micropubBackend == null) {
+                Log.i("micropub", "micropub backend == null");
+                return;
             }
+            Log.i("micropub", "Sending message to " + micropubBackend);
+            Post post = postModel.getPost();
+            client.createPost(post, token, HttpUrl.parse(micropubBackend));
         };
 
-        am.getAuthTokenByFeatures("Indieauth", "token", null, this, options, null, new OnTokenAcquired(callback), null);
+        accountManager.getAuthTokenByFeatures("Indieauth", "token", null, this, options, null, new OnTokenAcquired(this, callback), null);
     }
 
-    public class OnTokenAcquired implements AccountManagerCallback<Bundle> {
-        private final TokenReady callback;
+    public void galleryIntent(View view) {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        startActivityForResult(Intent.createChooser(intent, "Select File"), SELECT_FILE);
+    }
 
-        public OnTokenAcquired(TokenReady callback) {
-            this.callback = callback;
-        }
-
-        @Override
-        public void run(AccountManagerFuture<Bundle> result) {
-            // Get the result of the operation from the AccountManagerFuture.
-            try {
-                Bundle bundle = result.getResult();
-                Intent launch = (Intent) bundle.get(AccountManager.KEY_INTENT);
-                if (launch != null) {
-                    MainActivity.this.startActivityForResult(launch, 0);
-                    return;
-                }
-
-                // The token is a named value in the bundle. The name of the value
-                // is stored in the constant AccountManager.KEY_AUTHTOKEN.
-                String token = bundle.getString(AccountManager.KEY_AUTHTOKEN);
-                Log.d("micropub", "GetTokenForAccount Bundle is " + token);
-                callback.tokenReady(bundle.getString("accountType"), bundle.getString("authAccount"), token);
-            } catch (OperationCanceledException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (AuthenticatorException e) {
-                e.printStackTrace();
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == SELECT_FILE) {
+                onSelectFromGalleryResult(data);
             }
         }
     }
+
+    private void onSelectFromGalleryResult(Intent data) {
+        Log.i("micropub", "response received " + data.toString());
+        try (InputStream input = getApplicationContext().getContentResolver().openInputStream(data.getData())) {
+            byte[] output = getBytes(input);
+            String mimeType = data.getType();
+            if (mimeType == null) {
+                mimeType = data.resolveType(getApplicationContext().getContentResolver());
+            }
+
+            client.postMedia(output, mimeType);
+        } catch (FileNotFoundException e) {
+            Log.e("micropub", "Error while copying image", e);
+        } catch (IOException e) {
+            Log.e("micropub", "Error while copying image", e);
+        }
+    }
+
 }
