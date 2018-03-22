@@ -10,6 +10,7 @@ public class Post {
     private String[] syndicationUids;
     private String photo;
     private HttpUrl likeOf;
+    private HttpUrl bookmarkOf;
 
     public Post(String content) {
         if (content.equals("")) {
@@ -101,5 +102,15 @@ public class Post {
 
     public boolean hasContent() {
         return content != null;
+    }
+
+    public void setBookmarkOf(HttpUrl bookmarkOf) {
+        this.bookmarkOf = bookmarkOf;
+    }
+    public boolean hasBookmarkOf() {
+        return bookmarkOf!=null;
+    }
+    public String getBookmarkOf() {
+        return bookmarkOf.toString();
     }
 }

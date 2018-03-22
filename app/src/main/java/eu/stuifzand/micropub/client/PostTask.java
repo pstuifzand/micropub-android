@@ -45,7 +45,7 @@ class PostTask extends AsyncTask<String, Void, Void> {
         }
 
         if (post.hasInReplyTo()) {
-            builder.add("in-reply-to", post.getInReplyTo());
+            builder.add("in-reply-to[]", post.getInReplyTo());
         }
 
         if (post.hasName()) {
@@ -53,13 +53,16 @@ class PostTask extends AsyncTask<String, Void, Void> {
         }
 
         if (post.hasPhoto()) {
-            builder.add("photo", post.getPhoto());
+            builder.add("photo[]", post.getPhoto());
         }
 
         if (post.hasLikeOf()) {
-            builder.add("like-of", post.getLikeOf());
+            builder.add("like-of[]", post.getLikeOf());
         }
 
+        if (post.hasBookmarkOf()) {
+            builder.add("bookmark-of[]", post.getBookmarkOf());
+        }
         RequestBody formBody = builder.build();
 
         Request request = new Request.Builder()

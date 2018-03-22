@@ -27,6 +27,7 @@ public class PostViewModel extends ViewModel {
     public final ObservableField<String> inReplyTo = new ObservableField<>();
     public final ObservableField<String> photo = new ObservableField<>();
     public final ObservableField<String> likeOf = new ObservableField<>();
+    public final ObservableField<String> bookmarkOf = new ObservableField<>();
 
     public PostViewModel() {
         this.name.set("");
@@ -35,6 +36,7 @@ public class PostViewModel extends ViewModel {
         this.inReplyTo.set("");
         this.photo.set("");
         this.likeOf.set("");
+        this.bookmarkOf.set("");
     }
 
     public void clear() {
@@ -44,6 +46,7 @@ public class PostViewModel extends ViewModel {
         this.inReplyTo.set("");
         this.photo.set("");
         this.likeOf.set("");
+        this.bookmarkOf.set("");
     }
 
     public void findReplyTo(String urlOrNote) {
@@ -65,16 +68,28 @@ public class PostViewModel extends ViewModel {
         }
     }
 
+    public void findBookmarkOf(String urlOrNote) {
+        Matcher matcher = urlPattern.matcher(urlOrNote);
+        if (matcher.find()) {
+            bookmarkOf.set(matcher.group(1));
+        }
+    }
+
     public void setPhoto(String url) {
         this.photo.set(url);
     }
 
     public Post getPost() {
-        Post post = new Post(null, content.get(), category.get(), HttpUrl.parse(inReplyTo.get()));
+        Post post = new Post(name.get(), content.get(), category.get(), HttpUrl.parse(inReplyTo.get()));
         if (!this.photo.get().equals("")) {
             post.setPhoto(this.photo.get());
         }
-        post.setLikeOf(HttpUrl.parse(likeOf.get()));
+        if (!this.likeOf.get().equals("")) {
+            post.setLikeOf(HttpUrl.parse(likeOf.get()));
+        }
+        if (!this.bookmarkOf.get().equals("")) {
+            post.setBookmarkOf(HttpUrl.parse(bookmarkOf.get()));
+        }
         return post;
     }
 }
