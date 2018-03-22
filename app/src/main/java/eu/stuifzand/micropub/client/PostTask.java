@@ -31,9 +31,11 @@ class PostTask extends AsyncTask<String, Void, Void> {
     @Override
     protected Void doInBackground(String... strings) {
         FormBody.Builder builder = new FormBody.Builder();
-        builder.add("h", "entry")
-                .add("content", post.getContent());
+        builder.add("h", "entry");
 
+        if (post.hasContent()) {
+            builder.add("content", post.getContent());
+        }
         for (String cat : post.getCategories()) {
             builder.add("category[]", cat);
         }
@@ -52,6 +54,10 @@ class PostTask extends AsyncTask<String, Void, Void> {
 
         if (post.hasPhoto()) {
             builder.add("photo", post.getPhoto());
+        }
+
+        if (post.hasLikeOf()) {
+            builder.add("like-of", post.getLikeOf());
         }
 
         RequestBody formBody = builder.build();
@@ -76,15 +82,16 @@ class PostTask extends AsyncTask<String, Void, Void> {
         okhttp3.Response httpResponse = null;
         try {
             httpResponse = call.execute();
-            if (httpResponse.code() == 201) {
+            int code = httpResponse.code();
+            if (code == 201) {
                 String location = httpResponse.header("Location");
                 response.postValue(Response.successful(location));
             } else {
-                response.postValue(Response.failed());
+                response.postValue(Response.failed(httpResponse.toString()));
             }
 
         } catch (IOException e) {
-            response.postValue(Response.failed());
+            response.postValue(Response.failed(e.getMessage()));
         } finally {
             if (httpResponse != null) {
                 httpResponse.close();

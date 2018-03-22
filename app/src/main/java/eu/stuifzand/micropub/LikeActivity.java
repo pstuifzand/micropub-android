@@ -2,19 +2,14 @@ package eu.stuifzand.micropub;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.app.Activity;
-import android.app.Notification;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
-import android.media.session.MediaSession;
 import android.net.Uri;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -24,20 +19,16 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import eu.stuifzand.micropub.databinding.ActivityMainBinding;
 import eu.stuifzand.micropub.client.Client;
 import eu.stuifzand.micropub.client.Post;
+import eu.stuifzand.micropub.databinding.ActivityLikeBinding;
 import okhttp3.HttpUrl;
 
-import static eu.stuifzand.micropub.utils.IOUtils.getBytes;
+public class LikeActivity extends AppCompatActivity {
 
-public class MainActivity extends AppCompatActivity {
-
-    private static final int SELECT_FILE = 12;
     private AccountManager accountManager;
 
     private Account selectedAccount;
@@ -48,13 +39,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         accountManager = AccountManager.get(this);
 
         AccountManager am = AccountManager.get(this);
         Bundle options = new Bundle();
 
-        postModel = ViewModelProviders.of(MainActivity.this).get(PostViewModel.class);
-        client = ViewModelProviders.of(MainActivity.this).get(Client.class);
+        postModel = ViewModelProviders.of(LikeActivity.this).get(PostViewModel.class);
+        client = ViewModelProviders.of(LikeActivity.this).get(Client.class);
 
         TokenReady callback = (accountType, accountName, token) -> {
             Account[] accounts = accountManager.getAccountsByType(accountType);
@@ -71,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
 
             final View coordinator = findViewById(R.id.coordinator);
 
-            client.getResponse().observe(MainActivity.this, response -> {
+            client.getResponse().observe(LikeActivity.this, response -> {
                 Log.i("micropub", "response received " + response.isSuccess());
                 if (response.isSuccess()) {
                     postModel.clear();
@@ -86,19 +78,19 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
-            client.getMediaResponse().observe(MainActivity.this, response -> {
+            client.getMediaResponse().observe(LikeActivity.this, response -> {
                 Log.i("micropub", "media response received " + response.isSuccess());
                 if (response.isSuccess()) {
                     postModel.setPhoto(response.getUrl());
-                    Toast.makeText(MainActivity.this, "Photo upload succesful, photo url filled", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LikeActivity.this, "Photo upload succesful, photo url filled", Toast.LENGTH_SHORT).show();
                 }
             });
         };
 
         AuthError onError = (msg) -> {
-            MainActivity.this.runOnUiThread(new Runnable() {
+            LikeActivity.this.runOnUiThread(new Runnable() {
                 public void run() {
-                    Toast.makeText(MainActivity.this, msg, Toast.LENGTH_LONG).show();
+                    Toast.makeText(LikeActivity.this, msg, Toast.LENGTH_LONG).show();
                 }
             });
         };
@@ -114,41 +106,31 @@ public class MainActivity extends AppCompatActivity {
         );
 
 //        setContentView(R.layout.activity_main);
-        ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        ActivityLikeBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_like);
 
         binding.setViewModel(postModel);
         binding.setClient(client);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
         Intent intent = getIntent();
+        Log.i("micropub", intent.toString());
         if (intent != null) {
             String urlOrNote = intent.getStringExtra(Intent.EXTRA_TEXT);
             if (urlOrNote != null) {
                 HttpUrl url = HttpUrl.parse(urlOrNote);
                 if (url != null) {
-                    postModel.inReplyTo.set(urlOrNote);
+                    postModel.likeOf.set(urlOrNote);
                 } else {
-                    postModel.findReplyTo(urlOrNote);
+                    postModel.findLikeOf(urlOrNote);
                 }
             }
         }
-
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_like, menu);
         return true;
     }
 
@@ -160,10 +142,6 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            // TODO: implement some settings
-            return true;
-        }
         if (id == R.id.action_send) {
             InputMethodManager inputManager = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
             if (this.getCurrentFocus() != null && inputManager != null) {
@@ -171,15 +149,7 @@ public class MainActivity extends AppCompatActivity {
                 inputManager.hideSoftInputFromInputMethod(this.getCurrentFocus().getWindowToken(), 0);
             }
             sendPost(null);
-        } else if (id == R.id.action_photo) {
-            InputMethodManager inputManager = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
-            if (this.getCurrentFocus() != null && inputManager != null) {
-                inputManager.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(), 0);
-                inputManager.hideSoftInputFromInputMethod(this.getCurrentFocus().getWindowToken(), 0);
-            }
-            galleryIntent(null);
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -198,51 +168,13 @@ public class MainActivity extends AppCompatActivity {
             client.createPost(post, token, HttpUrl.parse(micropubBackend));
         };
         AuthError onError = (msg) -> {
-            MainActivity.this.runOnUiThread(new Runnable() {
+            LikeActivity.this.runOnUiThread(new Runnable() {
                 public void run() {
-                    Toast.makeText(MainActivity.this, msg, Toast.LENGTH_LONG).show();
+                    Toast.makeText(LikeActivity.this, msg, Toast.LENGTH_LONG).show();
                 }
             });
         };
 
         accountManager.getAuthTokenByFeatures("Indieauth", "token", null, this, options, null, new OnTokenAcquired(this, callback, onError), null);
     }
-
-    public void galleryIntent(View view) {
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-        startActivityForResult(Intent.createChooser(intent, "Select File"), SELECT_FILE);
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == SELECT_FILE) {
-                onSelectFromGalleryResult(data);
-            }
-        }
-    }
-
-    private void onSelectFromGalleryResult(Intent data) {
-        Log.i("micropub", "response received " + data.toString());
-        try (InputStream input = getApplicationContext().getContentResolver().openInputStream(data.getData())) {
-            byte[] output = getBytes(input);
-            String mimeType = data.getType();
-            if (mimeType == null) {
-                mimeType = data.resolveType(getApplicationContext().getContentResolver());
-            }
-
-            client.postMedia(output, mimeType);
-        } catch (FileNotFoundException e) {
-            Toast.makeText(this, "File not found: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-            Log.e("micropub", "Error while copying image", e);
-        } catch (IOException e) {
-            Toast.makeText(this, "Problem with IO " + e.getMessage(), Toast.LENGTH_SHORT).show();
-            Log.e("micropub", "Error while copying image", e);
-        }
-    }
-
 }

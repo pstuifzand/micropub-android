@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <variable
             name="viewModel"
             type="eu.stuifzand.micropub.PostViewModel" />
@@ -14,19 +13,23 @@
             type="eu.stuifzand.micropub.client.Client" />
     </data>
 
-
     <ScrollView
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/colorPrimary"
-        android:fillViewport="false"
+        android:fillViewport="true"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:windowSoftInputMode="adjustResize"
         tools:context="eu.stuifzand.micropub.MainActivity"
         tools:showIn="@layout/activity_main">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <android.support.constraint.ConstraintLayout
@@ -34,8 +37,7 @@
                 android:layout_height="wrap_content"
                 android:overScrollMode="always"
                 android:paddingTop="8dp"
-                android:scrollbars="vertical"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior">
+                android:scrollbars="vertical">
 
                 <android.support.design.widget.TextInputLayout
                     android:id="@+id/editInReplyToLayout"
@@ -63,6 +65,32 @@
                 </android.support.design.widget.TextInputLayout>
 
                 <android.support.design.widget.TextInputLayout
+                    android:id="@+id/editNameLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/in_reply_to"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/editName"
+                        android:layout_width="match_parent"
+                        android:layout_height="56sp"
+                        android:ems="10"
+                        android:imeOptions="actionNext"
+                        android:inputType="textAutoComplete|textUri"
+                        android:lines="1"
+                        android:maxLines="1"
+                        android:nextFocusForward="@id/content"
+                        android:singleLine="true"
+                        android:text="@={viewModel.name}"
+                        app:layout_constraintTop_toBottomOf="@+id/editInReplyToLayout" />
+
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
                     android:id="@+id/contentLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -71,7 +99,7 @@
                     app:counterEnabled="true"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/editInReplyToLayout">
+                    app:layout_constraintTop_toBottomOf="@+id/editNameLayout">
 
                     <android.support.design.widget.TextInputEditText
                         android:id="@+id/content"
@@ -134,32 +162,11 @@
                     <ListView
                         android:id="@+id/listSyndication"
                         android:layout_width="match_parent"
-                        android:layout_height="115dp"
+                        android:layout_height="69dp"
+                        android:isScrollContainer="false"
                         app:list="@{client.syndicates}" />
 
                 </LinearLayout>
-
-                <Button
-                    android:id="@+id/btnPost"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginTop="8dp"
-                    android:onClick="sendPost"
-                    android:text="@string/post"
-                    app:layout_constraintEnd_toEndOf="@id/editCategoryLayout"
-                    app:layout_constraintTop_toBottomOf="@+id/editPhotoLayout" />
-
-                <Button
-                    android:id="@+id/btnGetImage"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="12dp"
-                    android:layout_marginTop="8dp"
-                    android:onClick="galleryIntent"
-                    android:text="Select photo"
-                    app:layout_constraintEnd_toStartOf="@+id/btnPost"
-                    app:layout_constraintTop_toBottomOf="@+id/editPhotoLayout" />
 
                 <android.support.design.widget.TextInputLayout
                     android:id="@+id/editPhotoLayout"
@@ -174,7 +181,7 @@
                     <android.support.design.widget.TextInputEditText
                         android:id="@+id/editPhoto"
                         android:layout_width="match_parent"
-                        android:layout_height="56sp"
+                        android:layout_height="52dp"
                         android:ems="10"
                         android:imeOptions="actionDone"
                         android:inputType="text"
@@ -186,6 +193,5 @@
 
             </android.support.constraint.ConstraintLayout>
         </LinearLayout>
-
     </ScrollView>
 </layout>

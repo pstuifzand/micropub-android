@@ -75,7 +75,7 @@ public class Authenticator extends AbstractAccountAuthenticator {
         if (TextUtils.isEmpty(authToken)) {
             RequestBody formBody = new FormBody.Builder()
                     .add("code", am.getPassword(account))
-                    .add("redirect_uri", "https://stuifzand.eu/micropub-auth")
+                    .add("redirect_uri", "wrimini://oauth")
                     .add("client_id", "https://stuifzand.eu/micropub")
                     .add("me", account.name)
                     .add("grant_type", "authorization_code")

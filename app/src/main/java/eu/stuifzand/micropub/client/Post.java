@@ -9,23 +9,27 @@ public class Post {
     private String[] categories;
     private String[] syndicationUids;
     private String photo;
+    private HttpUrl likeOf;
 
     public Post(String content) {
-        this.content = content;
+        if (content.equals("")) {
+            this.content=null;
+        } else {
+            this.content = content;
+        }
         this.categories = new String[]{};
         this.syndicationUids = new String[]{};
     }
 
     public Post(String name, String content) {
-        this.name = name;
-        this.content = content;
+        this(content);
         this.categories = new String[]{};
+        this.name = name;
         this.syndicationUids = new String[]{};
     }
 
     public Post(String name, String content, String categories) {
-        this.name = name;
-        this.content = content;
+        this(name, content);
         this.categories = categories.split("\\s+");
         if (this.categories.length == 1 && this.categories[0].length() == 0) {
             this.categories = new String[]{};
@@ -81,5 +85,21 @@ public class Post {
 
     public boolean hasPhoto() {
         return this.photo != null;
+    }
+
+    public boolean hasLikeOf() {
+        return this.likeOf != null;
+    }
+
+    public void setLikeOf(HttpUrl likeOf) {
+        this.likeOf = likeOf;
+    }
+
+    public String getLikeOf() {
+        return likeOf.toString();
+    }
+
+    public boolean hasContent() {
+        return content != null;
     }
 }

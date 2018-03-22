@@ -5,6 +5,7 @@ import android.accounts.AccountAuthenticatorActivity;
 import android.accounts.AccountAuthenticatorResponse;
 import android.accounts.AccountManager;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
@@ -14,6 +15,8 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+
+import java.net.URI;
 
 import eu.stuifzand.micropub.R;
 import okhttp3.HttpUrl;
@@ -37,7 +40,6 @@ public class AuthenticationActivity extends AccountAuthenticatorActivity {
         final String me = intent.getStringExtra(WebsigninTask.ME);
         final AccountAuthenticatorResponse response = intent.getParcelableExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE);
 
-
         WebView webview = findViewById(R.id.webview);
         WebSettings webSettings = webview.getSettings();
         webSettings.setJavaScriptEnabled(true);
@@ -46,7 +48,7 @@ public class AuthenticationActivity extends AccountAuthenticatorActivity {
         HttpUrl.Builder builder = HttpUrl.parse(endpoint).newBuilder();
         builder.setQueryParameter("me", me)
                 .setQueryParameter("client_id", "https://stuifzand.eu/micropub")
-                .setQueryParameter("redirect_uri", "https://stuifzand.eu/micropub-auth")
+                .setQueryParameter("redirect_uri", "wrimini://oauth")
                 .setQueryParameter("response_type", "code")
                 .setQueryParameter("state", "1234") // @TODO use random states, check the state later
                 .setQueryParameter("scope", "create edit update post delete"); // @TODO use different scope
@@ -56,7 +58,7 @@ public class AuthenticationActivity extends AccountAuthenticatorActivity {
             @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
-                Log.i("micropub", request.getMethod()+ " "+request.getUrl());
+                Log.i("micropub", request.getMethod() + " " + request.getUrl());
                 Log.i("micropub", error.toString());
             }
 
@@ -64,10 +66,10 @@ public class AuthenticationActivity extends AccountAuthenticatorActivity {
             public boolean shouldOverrideUrlLoading(WebView viewx, WebResourceRequest request) {
                 Log.i("micropub", "New API: " + request.getUrl().toString());
                 String url = request.getUrl().toString();
-                if (url.startsWith("https://stuifzand.eu/micropub-auth")) {
-                    HttpUrl httpUrl = HttpUrl.parse(url);
-                    String code = httpUrl.queryParameter("code");
-                    String state = httpUrl.queryParameter("state");
+                if (url.startsWith("wrimini://oauth")) {
+                    Uri uri = Uri.parse(url);
+                    String code = uri.getQueryParameter("code");
+                    //String state = httpUrl.queryParameter("state");
 
                     new VerifyAuthenticationTask(response, AuthenticationActivity.this).execute(endpoint, me, code);
 

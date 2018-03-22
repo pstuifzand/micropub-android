@@ -1,5 +1,6 @@
 package eu.stuifzand.micropub.auth;
 
+import android.accounts.Account;
 import android.accounts.AccountAuthenticatorResponse;
 import android.accounts.AccountManager;
 import android.content.Intent;
@@ -70,7 +71,7 @@ public class VerifyAuthenticationTask extends AsyncTask<String, Void, VerifyAuth
 
         RequestBody formBody = new FormBody.Builder()
                 .add("code", code)
-                .add("redirect_uri", "https://stuifzand.eu/micropub-auth")
+                .add("redirect_uri", "wrimini://oauth")
                 .add("client_id", "https://stuifzand.eu/micropub")
                 .build();
 
@@ -141,7 +142,7 @@ public class VerifyAuthenticationTask extends AsyncTask<String, Void, VerifyAuth
             this.activity.finishLogin(intent);
             this.response.onResult(bundle);
         } else {
-            this.response.onError(1, "Could not verify authorization: " + message.getErrorMessage());
+            this.response.onError(AccountManager.ERROR_CODE_BAD_AUTHENTICATION, "Could not verify authorization: " + message.getErrorMessage());
         }
     }
 }

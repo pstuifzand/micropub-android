@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
@@ -49,6 +50,7 @@ public class WebsigninTask extends AsyncTask<String, Void, Bundle> {
             String profileUrl = strings[0];
             bundle.putString(ME, profileUrl);
             Connection conn = Jsoup.connect(profileUrl);
+            conn.timeout(10*1000);
             Document doc = conn.get();
             Connection.Response resp = conn.response();
 
@@ -81,7 +83,8 @@ public class WebsigninTask extends AsyncTask<String, Void, Bundle> {
                     linkHeaders.put(rel, link.attr("href"));
                 }
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
+            bundle.putString("ERROR", e.getMessage());
             return bundle;
         }
 
@@ -93,12 +96,23 @@ public class WebsigninTask extends AsyncTask<String, Void, Bundle> {
             }
         }
 
+        for (String rel : rels) {
+            if (bundle.getString(rel) == null) {
+                bundle.putString("ERROR", "Missing header or link: " + rel);
+                break;
+            }
+        }
         Log.i("micropub", bundle.toString());
         return bundle;
     }
 
     @Override
     protected void onPostExecute(Bundle bundle) {
+        String error = bundle.getString("ERROR");
+        if (error != null && error.length() > 0) {
+            Toast.makeText(this.activity, error, Toast.LENGTH_SHORT).show();
+            return;
+        }
         Intent intent = new Intent(this.activity, AuthenticationActivity.class);
         intent.putExtras(activity.getIntent());
         intent.putExtras(bundle);

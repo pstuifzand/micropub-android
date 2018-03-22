@@ -8,11 +8,20 @@
         android:title="@string/action_settings"
         app:showAsAction="never" />
 
-    <item android:id="@+id/action_send"
+    <item
+        android:id="@+id/action_photo"
+        android:enabled="true"
+        android:icon="@mipmap/ic_image_black_48dp"
         android:orderInCategory="10"
-        android:title="Send"
-        android:icon="@drawable/ic_menu_send"
-        app:showAsAction="ifRoom"
-        />
+        android:title="@string/action_photo"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_send"
+        android:enabled="true"
+        android:icon="@mipmap/ic_send_black_48dp"
+        android:orderInCategory="10"
+        android:title="@string/action_send"
+        app:showAsAction="always" />
 
 </menu>

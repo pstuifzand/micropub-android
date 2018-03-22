@@ -11,4 +11,10 @@
     <string name="post">Post</string>
     <string name="syndication">Syndicate to</string>
     <string name="user_agent">Wrimini</string>
+    <string name="post_successful">Post successful</string>
+    <string name="post_failed">Post failed</string>
+    <string name="action_photo">Photo</string>
+    <string name="action_send">Send</string>
+    <string name="like">Like</string>
+    <string name="bookmark">Bookmark</string>
 </resources>

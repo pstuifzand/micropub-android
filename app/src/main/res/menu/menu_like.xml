@@ -1,0 +1,14 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="eu.stuifzand.micropub.LikeActivity">
+
+    <item
+        android:id="@+id/action_send"
+        android:enabled="true"
+        android:icon="@mipmap/ic_send_black_48dp"
+        android:orderInCategory="10"
+        android:title="@string/action_send"
+        app:showAsAction="always" />
+
+</menu>

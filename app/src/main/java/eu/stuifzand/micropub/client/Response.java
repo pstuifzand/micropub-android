@@ -13,8 +13,8 @@ public class Response {
         this.url = url;
     }
 
-    public static Response failed() {
-        return new Response(false);
+    public static Response failed(String why) {
+        return new Response(false, why);
     }
 
     public static Response successful(String url) {
@@ -24,8 +24,8 @@ public class Response {
     public boolean isSuccess() {
         return success;
     }
-
     public String getUrl() {
         return url;
     }
+    public String getWhy() { return url; }
 }

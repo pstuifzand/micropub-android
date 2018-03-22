@@ -7,18 +7,22 @@ import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
 import android.app.Activity;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.IOException;
 
 public class OnTokenAcquired implements AccountManagerCallback<Bundle> {
     private final TokenReady callback;
+    private AuthError error;
     private Activity activity;
 
-    public OnTokenAcquired(Activity activity, TokenReady callback) {
+    public OnTokenAcquired(Activity activity, TokenReady callback, AuthError error) {
         this.activity = activity;
         this.callback = callback;
+        this.error = error;
     }
 
     @Override
@@ -39,10 +43,13 @@ public class OnTokenAcquired implements AccountManagerCallback<Bundle> {
             callback.tokenReady(bundle.getString("accountType"), bundle.getString("authAccount"), token);
         } catch (OperationCanceledException e) {
             Log.e("micropub", "on token acquired", e);
+            error.handleErrorMessage(e.getMessage());
         } catch (IOException e) {
             Log.e("micropub", "on token acquired", e);
+            error.handleErrorMessage(e.getMessage());
         } catch (AuthenticatorException e) {
             Log.e("micropub", "on token acquired", e);
+            error.handleErrorMessage(e.getMessage());
         }
     }
 }
