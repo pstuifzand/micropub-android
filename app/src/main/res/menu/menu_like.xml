@@ -6,7 +6,7 @@
     <item
         android:id="@+id/action_send"
         android:enabled="true"
-        android:icon="@mipmap/ic_send_black_48dp"
+        android:icon="@drawable/ic_send"
         android:orderInCategory="10"
         android:title="@string/action_send"
         app:showAsAction="always" />
