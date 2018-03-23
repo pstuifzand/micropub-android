@@ -21,11 +21,12 @@ public class WebSigninActivity extends AppCompatActivity {
         setContentView(R.layout.activity_web_signin);
     }
 
-
     public void startWebsignin(View view) {
         EditText profileUrl = (EditText) findViewById(R.id.profileUrl);
         String url = profileUrl.getText().toString();
-
+        if (!url.startsWith("http://") && !url.startsWith("https://")) {
+            url = "https://" + url;
+        }
         Intent intent = getIntent();
         AccountAuthenticatorResponse parcelable = intent.getParcelableExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE);
         new WebsigninTask(this, parcelable).execute(url);
