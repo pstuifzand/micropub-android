@@ -30,65 +30,76 @@ public class AuthenticationActivity extends AccountAuthenticatorActivity {
     private static final String TAG = "AuthenticationActivity";
     public static final String PARAM_USER_PASS = "eu.stuifzand.micropub.UserPass";
 
+    private Bundle bundle;
+    private Intent newIntent;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_authentication);
 
-        Intent intent = getIntent();
-        final String endpoint = intent.getStringExtra("authorization_endpoint");
-        final String me = intent.getStringExtra(WebsigninTask.ME);
-        final AccountAuthenticatorResponse response = intent.getParcelableExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE);
+        if (savedInstanceState != null) {
+            bundle = savedInstanceState.getBundle("response");
+            return;
+        }
 
-        WebView webview = findViewById(R.id.webview);
-        WebSettings webSettings = webview.getSettings();
-        webSettings.setJavaScriptEnabled(true);
-        webSettings.setDomStorageEnabled(true);
-        webSettings.setUserAgentString(getString(R.string.user_agent));
+        Intent intent = getIntent();
+        bundle = intent.getExtras();
+
+        String endpoint = bundle.getString("authorization_endpoint");
+        String me = bundle.getString(WebsigninTask.ME);
+        AccountAuthenticatorResponse response = bundle.getParcelable(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE);
+
         HttpUrl.Builder builder = HttpUrl.parse(endpoint).newBuilder();
         builder.setQueryParameter("me", me)
                 .setQueryParameter("client_id", "https://stuifzand.eu/micropub")
                 .setQueryParameter("redirect_uri", "wrimini://oauth")
                 .setQueryParameter("response_type", "code")
                 .setQueryParameter("state", "1234") // @TODO use random states, check the state later
-                .setQueryParameter("scope", "create edit update post delete"); // @TODO use different scope
-        Log.i("micropub", "LoadUrl: " + builder.toString());
-        webview.loadUrl(builder.toString());
-        webview.setWebViewClient(new WebViewClient() {
-            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-            @Override
-            public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
-                Log.i("micropub", request.getMethod() + " " + request.getUrl());
-                Log.i("micropub", error.toString());
-            }
+                .setQueryParameter("scope", "create"); // @TODO use different scope
 
-            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-            public boolean shouldOverrideUrlLoading(WebView viewx, WebResourceRequest request) {
-                Log.i("micropub", "New API: " + request.getUrl().toString());
-                String url = request.getUrl().toString();
-                if (url.startsWith("wrimini://oauth")) {
-                    Uri uri = Uri.parse(url);
-                    String code = uri.getQueryParameter("code");
-                    //String state = httpUrl.queryParameter("state");
+        String url = builder.toString();
+        Log.i("micropub", "LoadUrl: " + url);
+        Intent webIntent = new Intent(Intent.ACTION_VIEW);
+        webIntent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+        webIntent.setData(Uri.parse(url));
+        startActivity(webIntent);
+    }
 
-                    new VerifyAuthenticationTask(response, AuthenticationActivity.this).execute(endpoint, me, code);
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putBundle("response", bundle);
+        super.onSaveInstanceState(outState);
+    }
 
-                    return true;
-                }
-                viewx.loadUrl(request.getUrl().toString());
-                return false;
-            }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (getIntent() != null) {
+            bundle = getIntent().getExtras();
+        }
+    }
 
-            public boolean shouldOverrideUrlLoading(WebView viewx, String url) {
-                // TODO: fix for older versions
-                Log.i("micropub", "Old API: " + url);
-                if (url.startsWith("http://") || url.startsWith("https://")) {
-                    viewx.loadUrl(url);
-                    return false;
-                }
-                return true;
-            }
-        });
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        Log.i("micropub", "onCreate action: " + intent.getAction());
+        if ("android.intent.action.VIEW".equals(intent.getAction())) {
+            Log.i("micropub", intent.toString());
+            Uri uri = intent.getData();
+            String code = uri.getQueryParameter("code");
+            String state = uri.getQueryParameter("state");
+            Bundle response = bundle;
+            new VerifyAuthenticationTask(
+                    response.getParcelable(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE),
+                    AuthenticationActivity.this
+            ).execute(
+                    response.getString("authorization_endpoint"),
+                    response.getString(WebsigninTask.ME),
+                    code
+            );
+            return;
+        }
     }
 
     void finishLogin(Intent intent) {

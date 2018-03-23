@@ -33,14 +33,7 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
 
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data android:scheme="wrimini" />
-            </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
 
@@ -51,7 +44,18 @@
             </intent-filter>
         </activity>
         <activity android:name=".auth.WebSigninActivity" />
-        <activity android:name=".auth.AuthenticationActivity" />
+        <activity android:name=".auth.AuthenticationActivity"
+            android:exported="true"
+            android:launchMode="singleTop">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="wrimini" />
+            </intent-filter>
+        </activity>
         <activity android:name=".auth.AccountsActivity" />
 
         <service
