@@ -13,6 +13,8 @@ import eu.stuifzand.micropub.R;
 
 public class WebSigninActivity extends AppCompatActivity {
 
+    public static final int AUTHENTICATION_REQUEST = 14;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,4 +31,12 @@ public class WebSigninActivity extends AppCompatActivity {
         new WebsigninTask(this, parcelable).execute(url);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == AUTHENTICATION_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                finish();
+            }
+        }
+    }
 }

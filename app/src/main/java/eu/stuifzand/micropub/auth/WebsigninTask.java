@@ -118,6 +118,6 @@ public class WebsigninTask extends AsyncTask<String, Void, Bundle> {
         intent.putExtras(bundle);
         intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, response);
 
-        this.activity.startActivity(intent);
+        this.activity.startActivityForResult(intent, WebSigninActivity.AUTHENTICATION_REQUEST);
     }
 }
