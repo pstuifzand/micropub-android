@@ -65,32 +65,6 @@
                 </android.support.design.widget.TextInputLayout>
 
                 <android.support.design.widget.TextInputLayout
-                    android:id="@+id/editNameLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/in_reply_to"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
-
-                    <android.support.design.widget.TextInputEditText
-                        android:id="@+id/editName"
-                        android:layout_width="match_parent"
-                        android:layout_height="56sp"
-                        android:ems="10"
-                        android:imeOptions="actionNext"
-                        android:inputType="textAutoComplete|textUri"
-                        android:lines="1"
-                        android:maxLines="1"
-                        android:nextFocusForward="@id/content"
-                        android:singleLine="true"
-                        android:text="@={viewModel.name}"
-                        app:layout_constraintTop_toBottomOf="@+id/editInReplyToLayout" />
-
-                </android.support.design.widget.TextInputLayout>
-
-                <android.support.design.widget.TextInputLayout
                     android:id="@+id/contentLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -99,7 +73,7 @@
                     app:counterEnabled="true"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/editNameLayout">
+                    app:layout_constraintTop_toBottomOf="@+id/editInReplyToLayout">
 
                     <android.support.design.widget.TextInputEditText
                         android:id="@+id/content"
