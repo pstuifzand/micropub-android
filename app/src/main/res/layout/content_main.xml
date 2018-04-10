@@ -29,7 +29,7 @@
 
             <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="617dp"
+                android:layout_height="wrap_content"
                 android:overScrollMode="always"
                 android:paddingTop="8dp"
                 android:scrollbars="vertical">
@@ -39,7 +39,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/in_reply_to"
-                    app:layout_constraintBottom_toTopOf="@+id/contentLayout"
+                    app:layout_constraintBottom_toTopOf="@+id/editNameLayout"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
@@ -61,17 +61,43 @@
                 </android.support.design.widget.TextInputLayout>
 
                 <android.support.design.widget.TextInputLayout
+                    android:id="@+id/editNameLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/name"
+                    app:counterEnabled="false"
+                    app:layout_constraintBottom_toTopOf="@+id/contentLayout"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/editInReplyToLayout">
+
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/editName"
+                        android:layout_width="match_parent"
+                        android:layout_height="56sp"
+                        android:ems="10"
+                        android:imeOptions="actionNext"
+                        android:inputType="textAutoComplete|textUri"
+                        android:lines="1"
+                        android:maxLines="1"
+                        android:nextFocusForward="@id/content"
+                        android:singleLine="true"
+                        android:text="@={viewModel.name}" />
+
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
                     android:id="@+id/contentLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
                     android:hint="@string/content"
                     app:counterEnabled="true"
                     app:layout_constraintBottom_toTopOf="@+id/editCategoryLayout"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/editInReplyToLayout">
+                    app:layout_constraintTop_toBottomOf="@+id/editNameLayout">
 
                     <android.support.design.widget.TextInputEditText
                         android:id="@+id/content"
@@ -119,7 +145,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="top|fill"
                     android:orientation="vertical"
-                    app:layout_constraintBottom_toTopOf="@+id/contentLayout"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
@@ -148,7 +174,6 @@
                     android:id="@+id/editPhotoLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
                     android:hint="Photo url"
                     app:layout_constraintBottom_toTopOf="@+id/listLayout"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -174,7 +199,7 @@
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="50dp" />
+                android:layout_height="190dp" />
 
         </LinearLayout>
 
