@@ -3,18 +3,15 @@ package eu.stuifzand.micropub;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Activity;
-import android.app.Notification;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
-import android.media.session.MediaSession;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.menu.ActionMenuItemView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -28,9 +25,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
-import eu.stuifzand.micropub.databinding.ActivityMainBinding;
 import eu.stuifzand.micropub.client.Client;
 import eu.stuifzand.micropub.client.Post;
+import eu.stuifzand.micropub.databinding.ActivityMainBinding;
 import okhttp3.HttpUrl;
 
 import static eu.stuifzand.micropub.utils.IOUtils.getBytes;
@@ -45,9 +42,14 @@ public class MainActivity extends AppCompatActivity {
     private Client client;
     private PostViewModel postModel;
 
+    private ActionMenuItemView actionSend;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+
         accountManager = AccountManager.get(this);
 
         AccountManager am = AccountManager.get(this);
@@ -119,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
         binding.setViewModel(postModel);
         binding.setClient(client);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         Intent intent = getIntent();

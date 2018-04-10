@@ -1,5 +1,6 @@
 package eu.stuifzand.micropub;
 
+import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.databinding.ObservableArrayList;
 import android.databinding.ObservableField;
@@ -16,9 +17,9 @@ import okhttp3.HttpUrl;
 
 public class PostViewModel extends ViewModel {
     private static final Pattern urlPattern = Pattern.compile(
-            "(?:^|[\\W])((ht|f)tp(s?):\\/\\/|www\\.)"
+            "(?:^|[\\W])(((ht|f)tp(s?):\\/\\/|www\\.)"
                     + "(([\\w\\-]+\\.){1,}?([\\w\\-.~]+\\/?)*"
-                    + "[\\p{Alnum}.,%_=?&#\\-+()\\[\\]\\*$~@!:/{};']*)",
+                    + "[\\p{Alnum}.,%_=?&#\\-+()\\[\\]\\*$~@!:/{};']*))",
             Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
 
     public final ObservableField<String> name = new ObservableField<>();
@@ -71,7 +72,12 @@ public class PostViewModel extends ViewModel {
     public void findBookmarkOf(String urlOrNote) {
         Matcher matcher = urlPattern.matcher(urlOrNote);
         if (matcher.find()) {
-            bookmarkOf.set(matcher.group(1));
+            String url = matcher.group(1);
+            bookmarkOf.set(url);
+            String s = urlOrNote.replaceFirst(urlPattern.pattern(), "");
+            this.name.set(s);
+        } else {
+            this.content.set(urlOrNote);
         }
     }
 

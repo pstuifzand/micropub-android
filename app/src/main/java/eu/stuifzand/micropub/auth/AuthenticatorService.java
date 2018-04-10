@@ -24,5 +24,4 @@ public class AuthenticatorService extends Service {
     public IBinder onBind(Intent intent) {
         return authenticator.getIBinder();
     }
-
 }

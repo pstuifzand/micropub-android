@@ -4,6 +4,7 @@ import android.content.Context;
 import android.databinding.BindingAdapter;
 import android.databinding.DataBindingUtil;
 import android.databinding.ObservableArrayList;
+import android.provider.ContactsContract;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,10 +43,15 @@ public class ListAdapter extends BaseAdapter {
             inflater = (LayoutInflater) parent.getContext()
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         }
+        ListItemBinding binding = null;
 
-        ListItemBinding binding = DataBindingUtil.inflate(inflater, R.layout.list_item, parent, false);
+        if (convertView == null) {
+            binding = DataBindingUtil.inflate(inflater, R.layout.list_item, parent, false);
+        } else {
+            binding = DataBindingUtil.bind(convertView);
+        }
+
         binding.setInfo(list.get(position));
-
         return binding.getRoot();
     }
 

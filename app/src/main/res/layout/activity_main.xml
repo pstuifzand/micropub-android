@@ -17,7 +17,8 @@
         android:id="@+id/coordinator"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="eu.stuifzand.micropub.MainActivity">
+        tools:context="eu.stuifzand.micropub.MainActivity"
+        android:windowSoftInputMode="adjustResize">
 
         <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
@@ -35,13 +36,12 @@
 
         <include
             layout="@layout/content_main"
-            android:layout_height="607dp"
-            app:viewModel="@{viewModel}"
-            app:client="@{client}"
-            tools:layout_editor_absoluteY="-4dp"
             android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:client="@{client}"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            />
+            app:viewModel="@{viewModel}"
+            tools:layout_editor_absoluteY="-4dp" />
 
     </android.support.design.widget.CoordinatorLayout>
 </layout>

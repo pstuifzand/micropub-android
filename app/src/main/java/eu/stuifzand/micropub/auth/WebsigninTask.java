@@ -25,9 +25,11 @@ import java.util.regex.Pattern;
 
 import okhttp3.HttpUrl;
 
+import static eu.stuifzand.micropub.auth.WebSigninActivityKt.AUTHENTICATION_REQUEST;
+
 
 public class WebsigninTask extends AsyncTask<String, Void, Bundle> {
-    public static final String ME = "eu.stuifzand.micropub.ME";
+    static final String ME = "eu.stuifzand.micropub.ME";
     protected AccountAuthenticatorResponse response;
     protected Activity activity;
 
@@ -118,6 +120,6 @@ public class WebsigninTask extends AsyncTask<String, Void, Bundle> {
         intent.putExtras(bundle);
         intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, response);
 
-        this.activity.startActivityForResult(intent, WebSigninActivity.AUTHENTICATION_REQUEST);
+        this.activity.startActivityForResult(intent, AUTHENTICATION_REQUEST);
     }
 }

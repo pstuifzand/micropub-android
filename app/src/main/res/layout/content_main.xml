@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="viewModel"
             type="eu.stuifzand.micropub.PostViewModel" />
@@ -17,13 +18,7 @@
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/colorPrimary"
-        android:fillViewport="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:windowSoftInputMode="adjustResize"
         tools:context="eu.stuifzand.micropub.MainActivity"
         tools:showIn="@layout/activity_main">
 
@@ -34,7 +29,7 @@
 
             <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="617dp"
                 android:overScrollMode="always"
                 android:paddingTop="8dp"
                 android:scrollbars="vertical">
@@ -44,8 +39,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/in_reply_to"
+                    app:layout_constraintBottom_toTopOf="@+id/contentLayout"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
 
@@ -71,19 +67,21 @@
                     android:layout_marginTop="8dp"
                     android:hint="@string/content"
                     app:counterEnabled="true"
+                    app:layout_constraintBottom_toTopOf="@+id/editCategoryLayout"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/editInReplyToLayout">
 
                     <android.support.design.widget.TextInputEditText
                         android:id="@+id/content"
                         android:layout_width="match_parent"
-                        android:layout_height="100sp"
+                        android:layout_height="wrap_content"
                         android:ems="10"
                         android:gravity="top"
                         android:imeOptions="actionNext"
                         android:inputType="textMultiLine|textCapSentences|textAutoComplete"
-                        android:lines="5"
+                        android:lines="10"
                         android:nextFocusForward="@id/editCategory"
                         android:scrollbars="vertical"
                         android:text="@={viewModel.content}"
@@ -95,9 +93,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/categories"
+                    app:layout_constraintBottom_toTopOf="@+id/editPhotoLayout"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/contentLayout">
+                    app:layout_constraintTop_toBottomOf="@+id/contentLayout">
 
                     <android.support.design.widget.TextInputEditText
                         android:id="@+id/editCategory"
@@ -119,9 +119,11 @@
                     android:layout_height="wrap_content"
                     android:gravity="top|fill"
                     android:orientation="vertical"
+                    app:layout_constraintBottom_toTopOf="@+id/contentLayout"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/editCategoryLayout">
+                    app:layout_constraintTop_toBottomOf="@+id/editPhotoLayout">
 
                     <TextView
                         android:id="@+id/textView2"
@@ -148,9 +150,11 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:hint="Photo url"
+                    app:layout_constraintBottom_toTopOf="@+id/listLayout"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/listLayout">
+                    app:layout_constraintTop_toBottomOf="@+id/editCategoryLayout">
 
                     <android.support.design.widget.TextInputEditText
                         android:id="@+id/editPhoto"
@@ -165,7 +169,14 @@
                         android:text="@={viewModel.photo}" />
                 </android.support.design.widget.TextInputLayout>
 
+
             </android.support.constraint.ConstraintLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="50dp" />
+
         </LinearLayout>
+
     </ScrollView>
 </layout>

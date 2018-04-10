@@ -19,7 +19,7 @@
     <item
         android:id="@+id/action_send"
         android:enabled="true"
-        android:icon="@drawable/ic_send"
+        android:icon="@drawable/ic_send_primary"
         android:orderInCategory="10"
         android:title="@string/action_send"
         app:showAsAction="always" />

@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,7 +22,6 @@ import android.widget.Toast;
 import eu.stuifzand.micropub.client.Client;
 import eu.stuifzand.micropub.client.Post;
 import eu.stuifzand.micropub.databinding.ActivityBookmarkBinding;
-import eu.stuifzand.micropub.databinding.ContentBookmarkBinding;
 import okhttp3.HttpUrl;
 
 public class BookmarkActivity extends AppCompatActivity {
@@ -36,13 +36,38 @@ public class BookmarkActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        ActivityBookmarkBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_bookmark);
+
+        postModel = ViewModelProviders.of(BookmarkActivity.this).get(PostViewModel.class);
+        client = ViewModelProviders.of(BookmarkActivity.this).get(Client.class);
+
+        binding.setViewModel(postModel);
+        binding.setClient(client);
+//        contentBinding.setViewModel(postModel);
+//        contentBinding.setClient(client);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        Intent intent = getIntent();
+        if (intent != null) {
+            Log.i("micropub", intent.toString());
+            String urlOrNote = intent.getStringExtra(Intent.EXTRA_TEXT);
+            if (urlOrNote != null) {
+                HttpUrl url = HttpUrl.parse(urlOrNote);
+                if (url != null) {
+                    postModel.bookmarkOf.set(urlOrNote);
+                } else {
+                    postModel.findBookmarkOf(urlOrNote);
+                }
+            }
+        }
+
         accountManager = AccountManager.get(this);
 
         AccountManager am = AccountManager.get(this);
         Bundle options = new Bundle();
-
-        postModel = ViewModelProviders.of(BookmarkActivity.this).get(PostViewModel.class);
-        client = ViewModelProviders.of(BookmarkActivity.this).get(Client.class);
 
         TokenReady callback = (accountType, accountName, token) -> {
             Account[] accounts = accountManager.getAccountsByType(accountType);
@@ -73,14 +98,6 @@ public class BookmarkActivity extends AppCompatActivity {
                     Snackbar.make(coordinator, R.string.post_failed, Snackbar.LENGTH_SHORT).show();
                 }
             });
-
-            client.getMediaResponse().observe(BookmarkActivity.this, response -> {
-                Log.i("micropub", "media response received " + response.isSuccess());
-                if (response.isSuccess()) {
-                    postModel.setPhoto(response.getUrl());
-                    Toast.makeText(BookmarkActivity.this, "Photo upload succesful, photo url filled", Toast.LENGTH_SHORT).show();
-                }
-            });
         };
 
         AuthError onError = (msg) -> {
@@ -100,30 +117,6 @@ public class BookmarkActivity extends AppCompatActivity {
                 new OnTokenAcquired(this, callback, onError),
                 null
         );
-
-//        setContentView(R.layout.activity_main);
-        ActivityBookmarkBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_bookmark);
-        ContentBookmarkBinding contentBinding = DataBindingUtil.setContentView(this, R.layout.content_bookmark);
-
-        binding.setViewModel(postModel);
-        binding.setClient(client);
-        contentBinding.setViewModel(postModel);
-        contentBinding.setClient(client);
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
-
-        Intent intent = getIntent();
-        if (intent != null) {
-            Log.i("micropub", intent.toString());
-            String urlOrNote = intent.getStringExtra(Intent.EXTRA_TEXT);
-            if (urlOrNote != null) {
-                HttpUrl url = HttpUrl.parse(urlOrNote);
-                if (url != null) {
-                    postModel.bookmarkOf.set(urlOrNote);
-                } else {
-                    postModel.findBookmarkOf(urlOrNote);
-                }
-            }
-        }
     }
 
     @Override

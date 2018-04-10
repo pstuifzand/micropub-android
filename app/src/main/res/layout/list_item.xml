@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="info"
             type="eu.stuifzand.micropub.client.Syndication" />
@@ -11,14 +12,13 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <CheckBox
             android:id="@+id/enabled"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:checked="@={info.checked}"
-            android:text="@{info.name}"
-            />
+            android:text="@{info.name}" />
     </LinearLayout>
 </layout>
