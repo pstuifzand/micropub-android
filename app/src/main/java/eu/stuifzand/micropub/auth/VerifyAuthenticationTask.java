@@ -1,6 +1,5 @@
 package eu.stuifzand.micropub.auth;
 
-import android.accounts.Account;
 import android.accounts.AccountAuthenticatorResponse;
 import android.accounts.AccountManager;
 import android.content.Intent;
@@ -97,24 +96,23 @@ public class VerifyAuthenticationTask extends AsyncTask<String, Void, VerifyAuth
                 return new AuthenticationResult("Unsuccessful response from authorization_endpoint: HTTP status code is " + String.valueOf(response.code()));
             }
             ResponseBody body = response.body();
-            if (!response.header("Content-Type").contains("application/json")) {
-                return new AuthenticationResult("Unsupported content type of authorization_endpoint response: " + response.header("Content-Type"));
-            }
+            if (response.header("Content-Type").contains("application/json")) {
+                JsonParser parser = new JsonParser();
+                try {
+                    JsonElement jsonElement = parser.parse(body.string());
+                    JsonObject element = jsonElement.getAsJsonObject();
 
-            JsonParser parser = new JsonParser();
-            try {
-                JsonElement jsonElement = parser.parse(body.string());
-                JsonObject element = jsonElement.getAsJsonObject();
-
-                JsonElement meElement = element.get("me");
-                if (meElement == null) {
-                    return new AuthenticationResult("Missing element \"me\" in authorization_endpoint response");
+                    JsonElement meElement = element.get("me");
+                    if (meElement == null) {
+                        return new AuthenticationResult("Missing element \"me\" in authorization_endpoint response");
+                    }
+                    String resultMe = meElement.getAsString();
+                    return new AuthenticationResult(resultMe, code);
+                } catch (JsonParseException e) {
+                    return new AuthenticationResult("Could not parse json response from authorization_endpoint");
                 }
-                String resultMe = meElement.getAsString();
-                return new AuthenticationResult(resultMe, code);
-            } catch (JsonParseException e) {
-                return new AuthenticationResult("Could not parse json response from authorization_endpoint");
             }
+            return new AuthenticationResult("Unsupported content type of authorization_endpoint response: " + response.header("Content-Type"));
         } catch (IOException e) {
             return new AuthenticationResult("Could not get the response from the endpoint");
         } finally {
