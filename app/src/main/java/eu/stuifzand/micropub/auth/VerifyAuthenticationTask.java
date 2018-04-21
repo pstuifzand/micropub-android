@@ -34,7 +34,6 @@ public class VerifyAuthenticationTask extends AsyncTask<String, Void, VerifyAuth
         private String errorMessage;
 
         public String me;
-        public String scope;
         public String code;
 
         public AuthenticationResult(String errorMessage) {
@@ -42,10 +41,9 @@ public class VerifyAuthenticationTask extends AsyncTask<String, Void, VerifyAuth
             this.errorMessage = errorMessage;
         }
 
-        public AuthenticationResult(String me, String scope, String code) {
+        public AuthenticationResult(String me, String code) {
             this.success = true;
             this.me = me;
-            this.scope = scope;
             this.code = code;
         }
 
@@ -113,12 +111,7 @@ public class VerifyAuthenticationTask extends AsyncTask<String, Void, VerifyAuth
                     return new AuthenticationResult("Missing element \"me\" in authorization_endpoint response");
                 }
                 String resultMe = meElement.getAsString();
-                JsonElement scopeElement = element.get("scope");
-                if (scopeElement == null) {
-                    return new AuthenticationResult("Missing element \"scope\" in authorization_endpoint response");
-                }
-                String resultScope = scopeElement.getAsString();
-                return new AuthenticationResult(resultMe, resultScope, code);
+                return new AuthenticationResult(resultMe, code);
             } catch (JsonParseException e) {
                 return new AuthenticationResult("Could not parse json response from authorization_endpoint");
             }
