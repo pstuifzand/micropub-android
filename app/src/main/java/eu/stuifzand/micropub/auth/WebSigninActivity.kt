@@ -18,9 +18,9 @@ class WebSigninActivity : AppCompatActivity() {
         setContentView(R.layout.activity_web_signin)
     }
 
-    fun startWebsignin(view : View) {
+    fun startWebsignin(view: View) {
         val url = profileUrl.text.toString();
-        val me = if (!url.matches(Regex.fromLiteral("^https?://"))) "https://$url" else url
+        val me = if (url.startsWith("https://") || url.startsWith("http://")) url else "https://$url"
         val parcelable = intent.getParcelableExtra<AccountAuthenticatorResponse>(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE);
         WebsigninTask(this, parcelable).execute(me);
     }
