@@ -88,17 +88,24 @@ public class AuthenticationActivity extends AccountAuthenticatorActivity {
             Log.i("micropub", intent.toString());
             Uri uri = intent.getData();
             String code = uri.getQueryParameter("code");
-            String state = uri.getQueryParameter("state");
+            //String state = uri.getQueryParameter("state"); // @TODO: check/use state
             Bundle response = bundle;
-            new VerifyAuthenticationTask(
-                    response.getParcelable(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE),
-                    AuthenticationActivity.this
-            ).execute(
-                    response.getString("authorization_endpoint"),
-                    response.getString(WebsigninTask.ME),
-                    code
-            );
-            return;
+
+            String me = response.getString(WebsigninTask.ME);
+
+            Bundle bundle = new Bundle();
+            bundle.putString(AccountManager.KEY_ACCOUNT_TYPE, "Indieauth");
+            bundle.putString(AccountManager.KEY_ACCOUNT_NAME, me);
+            bundle.putString(AuthenticationActivity.PARAM_USER_PASS, code);
+
+            Intent loginIntent = new Intent();
+            loginIntent.putExtras(bundle);
+            finishLogin(loginIntent);
+
+            AccountAuthenticatorResponse r = response.getParcelable(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE);
+            if (r != null) {
+                r.onResult(bundle);
+            }
         }
     }
 
