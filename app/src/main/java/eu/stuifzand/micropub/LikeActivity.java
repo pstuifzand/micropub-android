@@ -108,6 +108,9 @@ public class LikeActivity extends AppCompatActivity {
 //        setContentView(R.layout.activity_main);
         ActivityLikeBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_like);
 
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
         binding.setViewModel(postModel);
         binding.setClient(client);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
