@@ -112,7 +112,7 @@ public class WebsigninTask extends AsyncTask<String, Void, Bundle> {
     protected void onPostExecute(Bundle bundle) {
         String error = bundle.getString("ERROR");
         if (error != null && error.length() > 0) {
-            Toast.makeText(this.activity, error, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this.activity, error, Toast.LENGTH_LONG).show();
             return;
         }
         Intent intent = new Intent(this.activity, AuthenticationActivity.class);
