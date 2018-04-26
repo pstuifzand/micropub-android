@@ -52,8 +52,8 @@ public class AuthenticationActivity extends AccountAuthenticatorActivity {
 
         HttpUrl.Builder builder = HttpUrl.parse(endpoint).newBuilder();
         builder.setQueryParameter("me", me)
-                .setQueryParameter("client_id", "https://stuifzand.eu/micropub")
-                .setQueryParameter("redirect_uri", "wrimini://oauth")
+                .setQueryParameter("client_id", "https://wrimini.net")
+                .setQueryParameter("redirect_uri", "https://wrimini.net/oauth/callback")
                 .setQueryParameter("response_type", "code")
                 .setQueryParameter("state", "1234") // @TODO use random states, check the state later
                 .setQueryParameter("scope", "create"); // @TODO use different scope
