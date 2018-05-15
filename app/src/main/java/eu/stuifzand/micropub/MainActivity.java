@@ -62,8 +62,14 @@ public class MainActivity extends AppCompatActivity {
             Account[] accounts = accountManager.getAccountsByType(accountType);
             if (accounts.length == 0)
                 return;
-            selectedAccount = accounts[0];
-            authToken = token;
+            for (int i = 0; i < accounts.length; i++) {
+                Log.i("micropub", "accounts["+i+"] = " + accounts[i].name + " " + accounts[i].type);
+                if (accounts[i].type.equals(accountType)&&accounts[i].name.equals(accountName)) {
+                    selectedAccount = accounts[i];
+                    authToken = token;
+                    break;
+                }
+            }
 
             String micropubBackend = accountManager.getUserData(selectedAccount, "micropub");
             if (micropubBackend == null) return;
@@ -202,7 +208,11 @@ public class MainActivity extends AppCompatActivity {
             });
         };
 
-        accountManager.getAuthTokenByFeatures("Indieauth", "token", null, this, options, null, new OnTokenAcquired(this, callback, onError), null);
+        if (selectedAccount == null || authToken == null) {
+            accountManager.getAuthTokenByFeatures("Indieauth", "token", null, this, options, null, new OnTokenAcquired(this, callback, onError), null);
+        } else {
+            callback.tokenReady(selectedAccount.type, selectedAccount.name, authToken);
+        }
     }
 
     public void galleryIntent(View view) {

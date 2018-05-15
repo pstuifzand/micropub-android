@@ -99,6 +99,7 @@ public class Authenticator extends AbstractAccountAuthenticator {
                     JsonParser parser = new JsonParser();
                     JsonObject element = parser.parse(body.string()).getAsJsonObject();
                     authToken = element.get("access_token").getAsString();
+                    am.setAuthToken(account, authTokenType, authToken);
                 }
             } catch (IOException e) {
                 Log.e("micropub", "Failed getting token response", e);
