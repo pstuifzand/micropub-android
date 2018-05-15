@@ -4,8 +4,10 @@ import android.accounts.Account;
 import android.accounts.AccountAuthenticatorActivity;
 import android.accounts.AccountAuthenticatorResponse;
 import android.accounts.AccountManager;
+import android.arch.persistence.room.Room;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
@@ -19,6 +21,7 @@ import android.webkit.WebViewClient;
 import java.net.URI;
 
 import eu.stuifzand.micropub.R;
+import eu.stuifzand.micropub.utils.RandomStringUtils;
 import okhttp3.HttpUrl;
 
 public class AuthenticationActivity extends AccountAuthenticatorActivity {
@@ -46,17 +49,69 @@ public class AuthenticationActivity extends AccountAuthenticatorActivity {
         Intent intent = getIntent();
         bundle = intent.getExtras();
 
+        if ("android.intent.action.VIEW".equals(intent.getAction())) {
+            Log.i("micropub", intent.toString());
+            Uri uri = intent.getData();
+            String code = uri.getQueryParameter("code");
+            String state = uri.getQueryParameter("state"); // @TODO: check/use state
+
+            AppDatabase db = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "auth").build();
+            new AsyncTask<String, Void, Auth>() {
+                @Override
+                protected Auth doInBackground(String... strings) {
+                    String state = strings[0];
+                    Auth auth = db.authDao().load(state);
+                    db.close();
+                    return auth;
+                }
+
+                @Override
+                protected void onPostExecute(Auth auth) {
+                    if (auth != null) {
+                        finish();
+                        return;
+                    }
+                    Bundle bundle = new Bundle();
+                    bundle.putString(AccountManager.KEY_ACCOUNT_TYPE, "Indieauth");
+                    bundle.putString(AccountManager.KEY_ACCOUNT_NAME, auth.getMe());
+                    bundle.putString(AuthenticationActivity.PARAM_USER_PASS, code);
+
+                    Intent loginIntent = new Intent();
+                    loginIntent.putExtras(bundle);
+                    finishLogin(loginIntent);
+                }
+            }.execute(state);
+            return;
+        }
+
         String endpoint = bundle.getString("authorization_endpoint");
         String me = bundle.getString(WebsigninTask.ME);
         AccountAuthenticatorResponse response = bundle.getParcelable(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE);
+
+        String state = RandomStringUtils.randomString(16);
 
         HttpUrl.Builder builder = HttpUrl.parse(endpoint).newBuilder();
         builder.setQueryParameter("me", me)
                 .setQueryParameter("client_id", "https://wrimini.net")
                 .setQueryParameter("redirect_uri", "https://wrimini.net/oauth/callback")
                 .setQueryParameter("response_type", "code")
-                .setQueryParameter("state", "1234") // @TODO use random states, check the state later
+                .setQueryParameter("state", state)
                 .setQueryParameter("scope", "create"); // @TODO use different scope
+
+        AppDatabase db = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "auth")
+                .fallbackToDestructiveMigration()
+                .build();
+
+        Auth auth = new Auth(state, me);
+
+        new AsyncTask<Auth, Void, Void>() {
+            @Override
+            protected Void doInBackground(Auth... auths) {
+                db.authDao().save(auths[0]);
+                db.close();
+                return null;
+            }
+        }.execute(auth);
 
         String url = builder.toString();
         Log.i("micropub", "LoadUrl: " + url);
