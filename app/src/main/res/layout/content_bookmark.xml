@@ -30,7 +30,7 @@
 
             <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="574dp"
+                android:layout_height="597dp"
                 android:overScrollMode="always"
                 android:paddingTop="8dp"
                 android:scrollbars="vertical">
@@ -39,11 +39,11 @@
                     android:id="@+id/editBookmarkOfTextLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
                     app:layout_constraintBottom_toTopOf="@+id/editNameLayout"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="1.0"
+                    app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintVertical_chainStyle="spread_inside">
 
                     <android.support.design.widget.TextInputEditText
@@ -57,15 +57,17 @@
 
                 <android.support.design.widget.TextInputLayout
                     android:id="@+id/contentLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
+                    android:layout_height="110dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginRight="8dp"
                     android:hint="@string/content"
                     app:counterEnabled="true"
                     app:layout_constraintBottom_toTopOf="@+id/editCategoryLayout"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/editNameLayout">
+                    app:layout_constraintTop_toBottomOf="@+id/editNameLayout"
+                    android:layout_width="match_parent">
 
                     <android.support.design.widget.TextInputEditText
                         android:id="@+id/content"
@@ -86,7 +88,6 @@
                     android:id="@+id/editNameLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
                     android:hint="@string/name"
                     app:counterEnabled="false"
                     app:layout_constraintBottom_toTopOf="@+id/contentLayout"
@@ -114,12 +115,14 @@
                 <LinearLayout
                     android:id="@+id/listLayout"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="110dp"
                     android:layout_marginTop="8dp"
                     android:gravity="top|fill"
                     android:orientation="vertical"
-                    app:layout_constraintTop_toBottomOf="@+id/editCategoryLayout"
-                    tools:layout_editor_absoluteX="16dp">
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/editCategoryLayout">
 
                     <TextView
                         android:id="@+id/textView2"
@@ -143,11 +146,13 @@
                 <android.support.design.widget.TextInputLayout
                     android:id="@+id/editCategoryLayout"
                     android:layout_width="match_parent"
-                    android:layout_height="55dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:hint="@string/categories"
-                    app:layout_constraintTop_toBottomOf="@+id/contentLayout"
-                    tools:layout_editor_absoluteX="0dp">
+                    app:layout_constraintBottom_toTopOf="@+id/listLayout"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/contentLayout">
 
                     <android.support.design.widget.TextInputEditText
                         android:id="@+id/editCategory"
