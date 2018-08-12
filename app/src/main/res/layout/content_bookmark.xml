@@ -15,22 +15,21 @@
     </data>
 
     <ScrollView
-        android:id="@+id/scrollView_bookmark"
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        tools:context="eu.stuifzand.micropub.BookmarkActivity"
-        tools:showIn="@layout/activity_bookmark">
+        tools:context="eu.stuifzand.micropub.MainActivity"
+        tools:showIn="@layout/activity_main">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="8dp">
+            android:orientation="vertical">
 
             <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="597dp"
+                android:layout_height="match_parent"
                 android:overScrollMode="always"
                 android:paddingTop="8dp"
                 android:scrollbars="vertical">
@@ -50,9 +49,37 @@
                         android:id="@+id/editBookmarkOfText"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Bookmark of"
+                        android:hint="@string/bookmark_of"
                         android:singleLine="true"
                         android:text="@={viewModel.bookmarkOf}" />
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/editNameLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/name"
+                    app:counterEnabled="false"
+                    app:layout_constraintBottom_toTopOf="@+id/contentLayout"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/editBookmarkOfTextLayout">
+
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/editName"
+                        android:layout_width="match_parent"
+                        android:layout_height="56sp"
+                        android:ems="10"
+                        android:imeOptions="actionNext"
+                        android:inputType="textAutoComplete|textUri"
+                        android:lines="1"
+                        android:maxLines="1"
+                        android:nextFocusForward="@id/content"
+                        android:singleLine="true"
+                        android:text="@={viewModel.name}"
+                        app:layout_constraintTop_toBottomOf="@+id/editInReplyToLayout" />
+
                 </android.support.design.widget.TextInputLayout>
 
                 <android.support.design.widget.TextInputLayout
@@ -85,37 +112,35 @@
                 </android.support.design.widget.TextInputLayout>
 
                 <android.support.design.widget.TextInputLayout
-                    android:id="@+id/editNameLayout"
+                    android:id="@+id/editCategoryLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/name"
-                    app:counterEnabled="false"
-                    app:layout_constraintBottom_toTopOf="@+id/contentLayout"
+                    android:layout_marginTop="8dp"
+                    android:hint="@string/categories"
+                    app:layout_constraintBottom_toTopOf="@+id/listLayout"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/editBookmarkOfTextLayout">
+                    app:layout_constraintTop_toBottomOf="@+id/contentLayout">
 
                     <android.support.design.widget.TextInputEditText
-                        android:id="@+id/editName"
+                        android:id="@+id/editCategory"
                         android:layout_width="match_parent"
-                        android:layout_height="56sp"
+                        android:layout_height="wrap_content"
                         android:ems="10"
                         android:imeOptions="actionNext"
-                        android:inputType="textAutoComplete|textUri"
+                        android:inputType="text"
                         android:lines="1"
                         android:maxLines="1"
-                        android:nextFocusForward="@id/content"
                         android:singleLine="true"
-                        android:text="@={viewModel.name}"
-                        app:layout_constraintTop_toBottomOf="@+id/editInReplyToLayout" />
+                        android:text="@={viewModel.category}" />
 
                 </android.support.design.widget.TextInputLayout>
+
 
                 <LinearLayout
                     android:id="@+id/listLayout"
                     android:layout_width="match_parent"
-                    android:layout_height="110dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:gravity="top|fill"
                     android:orientation="vertical"
@@ -142,39 +167,7 @@
                         app:multipleItems="@{client.syndicates}" />
 
                 </LinearLayout>
-
-                <android.support.design.widget.TextInputLayout
-                    android:id="@+id/editCategoryLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:hint="@string/categories"
-                    app:layout_constraintBottom_toTopOf="@+id/listLayout"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/contentLayout">
-
-                    <android.support.design.widget.TextInputEditText
-                        android:id="@+id/editCategory"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:ems="10"
-                        android:imeOptions="actionNext"
-                        android:inputType="text"
-                        android:lines="1"
-                        android:maxLines="1"
-                        android:singleLine="true"
-                        android:text="@={viewModel.category}" />
-
-                </android.support.design.widget.TextInputLayout>
-
-
             </android.support.constraint.ConstraintLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="50dp" />
-
         </LinearLayout>
     </ScrollView>
 </layout>

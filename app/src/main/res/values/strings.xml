@@ -18,4 +18,5 @@
     <string name="like">Like</string>
     <string name="bookmark">Bookmark</string>
     <string name="title_activity_bookmark">BookmarkActivity</string>
+    <string name="bookmark_of">Bookmark of</string>
 </resources>
