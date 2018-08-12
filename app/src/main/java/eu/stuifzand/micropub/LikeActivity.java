@@ -32,7 +32,6 @@ public class LikeActivity extends AppCompatActivity {
     private AccountManager accountManager;
 
     private Account selectedAccount;
-    private String authToken;
     private Client client;
     private PostViewModel postModel;
 
@@ -53,7 +52,6 @@ public class LikeActivity extends AppCompatActivity {
             if (accounts.length == 0)
                 return;
             selectedAccount = accounts[0];
-            authToken = token;
 
             String micropubBackend = accountManager.getUserData(selectedAccount, "micropub");
             if (micropubBackend == null) return;
@@ -87,13 +85,8 @@ public class LikeActivity extends AppCompatActivity {
             });
         };
 
-        AuthError onError = (msg) -> {
-            LikeActivity.this.runOnUiThread(new Runnable() {
-                public void run() {
-                    Toast.makeText(LikeActivity.this, msg, Toast.LENGTH_LONG).show();
-                }
-            });
-        };
+        AuthError onError = (msg) -> LikeActivity.this.runOnUiThread(() -> Toast.makeText(LikeActivity.this, msg, Toast.LENGTH_LONG).show());
+
         accountManager.getAuthTokenByFeatures(
                 "Indieauth",
                 "token",
@@ -117,15 +110,13 @@ public class LikeActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         Log.i("micropub", intent.toString());
-        if (intent != null) {
-            String urlOrNote = intent.getStringExtra(Intent.EXTRA_TEXT);
-            if (urlOrNote != null) {
-                HttpUrl url = HttpUrl.parse(urlOrNote);
-                if (url != null) {
-                    postModel.likeOf.set(urlOrNote);
-                } else {
-                    postModel.findLikeOf(urlOrNote);
-                }
+        String urlOrNote = intent.getStringExtra(Intent.EXTRA_TEXT);
+        if (urlOrNote != null) {
+            HttpUrl url = HttpUrl.parse(urlOrNote);
+            if (url != null) {
+                postModel.likeOf.set(urlOrNote);
+            } else {
+                postModel.findLikeOf(urlOrNote);
             }
         }
     }
@@ -156,7 +147,7 @@ public class LikeActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void sendPost(View view) {
+    private void sendPost(View view) {
         AccountManager am = AccountManager.get(this);
         Bundle options = new Bundle();
 
@@ -170,13 +161,7 @@ public class LikeActivity extends AppCompatActivity {
             Post post = postModel.getPost();
             client.createPost(post, token, HttpUrl.parse(micropubBackend));
         };
-        AuthError onError = (msg) -> {
-            LikeActivity.this.runOnUiThread(new Runnable() {
-                public void run() {
-                    Toast.makeText(LikeActivity.this, msg, Toast.LENGTH_LONG).show();
-                }
-            });
-        };
+        AuthError onError = (msg) -> LikeActivity.this.runOnUiThread(() -> Toast.makeText(LikeActivity.this, msg, Toast.LENGTH_LONG).show());
 
         accountManager.getAuthTokenByFeatures("Indieauth", "token", null, this, options, null, new OnTokenAcquired(this, callback, onError), null);
     }
