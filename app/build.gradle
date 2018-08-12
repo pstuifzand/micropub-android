@@ -7,8 +7,8 @@ android {
         applicationId "eu.stuifzand.micropub"
         minSdkVersion 15
         targetSdkVersion 27
-        versionCode 19
-        versionName '0.1.4-alpha'
+        versionCode 20
+        versionName '0.1.5-alpha'
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
