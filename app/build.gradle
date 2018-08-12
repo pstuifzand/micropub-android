@@ -6,9 +6,9 @@ android {
     defaultConfig {
         applicationId "eu.stuifzand.micropub"
         minSdkVersion 15
-        targetSdkVersion 26
-        versionCode 18
-        versionName '0.1.3-alpha'
+        targetSdkVersion 27
+        versionCode 19
+        versionName '0.1.4-alpha'
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
