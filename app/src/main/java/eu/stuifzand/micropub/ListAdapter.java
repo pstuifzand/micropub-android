@@ -55,7 +55,7 @@ public class ListAdapter extends BaseAdapter {
         return binding.getRoot();
     }
 
-    @BindingAdapter("app:list")
+    @BindingAdapter("list")
     public static void bindList(ListView view, ObservableArrayList<Syndication> list) {
         assert list != null;
         ListAdapter adapter = new ListAdapter(list);
