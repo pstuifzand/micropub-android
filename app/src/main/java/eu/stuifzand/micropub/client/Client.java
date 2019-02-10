@@ -5,6 +5,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.databinding.ObservableArrayList;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -24,6 +25,7 @@ public class Client extends ViewModel {
     private MutableLiveData<Response> response = new MutableLiveData<>();
     private MutableLiveData<Response> mediaResponse = new MutableLiveData<>();
     public final ObservableArrayList<Syndication> syndicates = new ObservableArrayList<>();
+    public final ObservableArrayList<Destination> destinations = new ObservableArrayList<>();
 
     private String accountType;
     private String accountName;
@@ -68,6 +70,15 @@ public class Client extends ViewModel {
                     syndicates.add(new Syndication(syn.get("uid").getAsString(), syn.get("name").getAsString()));
                 }
             }
+
+            arr = config.getAsJsonObject().getAsJsonArray("destination");
+            if (arr != null) {
+                destinations.clear();
+                for (int i = 0; i < arr.size(); i++) {
+                    JsonObject syn = arr.get(i).getAsJsonObject();
+                    destinations.add(new Destination(syn.get("uid").getAsString(), syn.get("name").getAsString()));
+                }
+            }
         };
         new MicropubConfigTask(this.getClient(), micropubBackend, token, callback, "config").execute();
     }
@@ -84,14 +95,36 @@ public class Client extends ViewModel {
         new MicropubConfigTask(this.getClient(), micropubBackend, token, callback, "syndicate-to").execute();
     }
 
+    public void loadDestinations(HttpUrl micropubBackend) {
+        String configKey = "destination";
+        MicropubConfigResponseCallback callback = element -> {
+            JsonArray arr = element.getAsJsonObject().getAsJsonArray(configKey);
+            destinations.clear();
+            for (int i = 0; i < arr.size(); i++) {
+                JsonObject syn = arr.get(i).getAsJsonObject();
+                destinations.add(new Destination(syn.get("uid").getAsString(), syn.get("name").getAsString()));
+            }
+        };
+        new MicropubConfigTask(this.getClient(), micropubBackend, token, callback, configKey).execute();
+    }
+
     public void createPost(Post post, String accessToken, HttpUrl micropubBackend) {
-        List<String> uids = new ArrayList<String>();
+        List<String> uids = new ArrayList<>();
         for (Syndication s : syndicates) {
             if (s.checked.get()) {
                 uids.add(s.uid.get());
             }
         }
         post.setSyndicationUids(uids.toArray(new String[uids.size()]));
+
+        uids = new ArrayList<>();
+        for (Destination destination : destinations) {
+            if (destination.checked.get()) {
+                Log.i("micropub", destination.uid.get());
+                uids.add(destination.uid.get());
+            }
+        }
+        post.setDestinationUids(uids.toArray(new String[uids.size()]));
 
         new PostTask(post, micropubBackend, accessToken, response).execute();
     }

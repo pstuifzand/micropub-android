@@ -11,6 +11,7 @@ public class Post {
     private String photo;
     private HttpUrl likeOf;
     private HttpUrl bookmarkOf;
+    private String[] destinationUids;
 
     public Post(String content) {
         if (content.equals("")) {
@@ -20,6 +21,7 @@ public class Post {
         }
         this.categories = new String[]{};
         this.syndicationUids = new String[]{};
+        this.destinationUids = new String[]{};
     }
 
     public Post(String name, String content) {
@@ -27,6 +29,7 @@ public class Post {
         this.categories = new String[]{};
         this.name = name;
         this.syndicationUids = new String[]{};
+        this.destinationUids = new String[]{};
     }
 
     public Post(String name, String content, String categories) {
@@ -36,12 +39,14 @@ public class Post {
             this.categories = new String[]{};
         }
         this.syndicationUids = new String[]{};
+        this.destinationUids = new String[]{};
     }
 
     public Post(String name, String content, String categories, HttpUrl inReplyTo) {
         this(name, content, categories);
         this.inReplyTo = inReplyTo;
         this.syndicationUids = new String[]{};
+        this.destinationUids = new String[]{};
     }
 
     public String getContent() {
@@ -112,5 +117,13 @@ public class Post {
     }
     public String getBookmarkOf() {
         return bookmarkOf.toString();
+    }
+
+    public void setDestinationUids(String[] uids) {
+        this.destinationUids = uids;
+    }
+
+    public String[] getDestinationUids() {
+        return destinationUids;
     }
 }

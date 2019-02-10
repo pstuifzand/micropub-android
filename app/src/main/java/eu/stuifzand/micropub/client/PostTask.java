@@ -44,6 +44,10 @@ class PostTask extends AsyncTask<String, Void, Void> {
             builder.add("mp-syndicate-to[]", uid);
         }
 
+        for (String uid : post.getDestinationUids()) {
+            builder.add("mp-destination", uid);
+        }
+
         if (post.hasInReplyTo()) {
             builder.add("in-reply-to[]", post.getInReplyTo());
         }
@@ -82,6 +86,7 @@ class PostTask extends AsyncTask<String, Void, Void> {
                 .build();
 
         Call call = client.newCall(request);
+
         okhttp3.Response httpResponse = null;
         try {
             httpResponse = call.execute();
