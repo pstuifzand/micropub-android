@@ -3,8 +3,216 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <data>
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context="eu.stuifzand.micropub.MainActivity"
+        tools:showIn="@layout/activity_main"
+        android:layout_gravity="bottom|start|end"
+        >
 
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:id="@+id/listLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="top|fill"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/editPhotoLayout">
+
+                <TextView
+                    android:id="@+id/textView2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_weight="1"
+                    android:text="@string/syndication"
+                    android:textSize="16sp" />
+
+                <LinearLayout
+                    android:id="@+id/listSyndication"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:multipleItems="@{client.syndicates}" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/listDestinationLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="top|fill"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/listLayout">
+
+                <TextView
+                    android:id="@+id/textViewDestination"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_weight="1"
+                    android:text="@string/destinations"
+                    android:textSize="16sp" />
+
+                <LinearLayout
+                    android:id="@+id/listDestination"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:destinations="@{client.destinations}" />
+
+
+            </LinearLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/contentLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/content"
+                app:counterEnabled="true"
+                app:layout_constraintBottom_toTopOf="@+id/editCategoryLayout"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/editNameLayout">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/content"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:gravity="top"
+                    android:imeOptions="actionNext"
+                    android:inputType="textMultiLine|textCapSentences|textAutoComplete"
+                    android:lines="10"
+                    android:nextFocusForward="@id/editCategory"
+                    android:scrollbars="vertical"
+                    android:text="@={viewModel.content}"
+                    tools:layout_editor_absoluteY="101dp" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/editCategoryLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/categories"
+                app:layout_constraintBottom_toTopOf="@+id/editPhotoLayout"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/contentLayout">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/editCategory"
+                    android:layout_width="match_parent"
+                    android:layout_height="56sp"
+                    android:ems="10"
+                    android:imeOptions="actionNext"
+                    android:inputType="text"
+                    android:lines="1"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:text="@={viewModel.category}" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/editPhotoLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Photo url"
+                app:layout_constraintBottom_toTopOf="@+id/listLayout"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/editCategoryLayout">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/editPhoto"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:ems="10"
+                    android:imeOptions="actionDone"
+                    android:inputType="text"
+                    android:lines="1"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:text="@={viewModel.photo}" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/editInReplyToLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/in_reply_to"
+                app:layout_constraintBottom_toTopOf="@+id/editNameLayout"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/editInReplyTo"
+                    android:layout_width="match_parent"
+                    android:layout_height="56sp"
+                    android:ems="10"
+                    android:imeOptions="actionNext"
+                    android:inputType="textAutoComplete|textUri"
+                    android:lines="1"
+                    android:maxLines="1"
+                    android:nextFocusForward="@id/content"
+                    android:singleLine="true"
+                    android:text="@={viewModel.inReplyTo}" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/editNameLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/name"
+                app:counterEnabled="false"
+                app:layout_constraintBottom_toTopOf="@+id/contentLayout"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/editInReplyToLayout">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/editName"
+                    android:layout_width="match_parent"
+                    android:layout_height="56sp"
+                    android:ems="10"
+                    android:imeOptions="actionNext"
+                    android:inputType="textAutoComplete|textUri"
+                    android:lines="1"
+                    android:maxLines="1"
+                    android:nextFocusForward="@id/content"
+                    android:singleLine="true"
+                    android:text="@={viewModel.name}" />
+
+            </android.support.design.widget.TextInputLayout>
+
+
+        </android.support.constraint.ConstraintLayout>
+
+
+    </android.support.v4.widget.NestedScrollView>
+
+    <data>
         <variable
             name="viewModel"
             type="eu.stuifzand.micropub.PostViewModel" />
@@ -13,226 +221,4 @@
             name="client"
             type="eu.stuifzand.micropub.client.Client" />
     </data>
-
-    <ScrollView
-        android:id="@+id/scrollView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        tools:context="eu.stuifzand.micropub.MainActivity"
-        tools:showIn="@layout/activity_main">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <android.support.constraint.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:overScrollMode="always"
-                android:paddingTop="8dp"
-                android:scrollbars="vertical">
-
-                <android.support.design.widget.TextInputLayout
-                    android:id="@+id/editInReplyToLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/in_reply_to"
-                    app:layout_constraintBottom_toTopOf="@+id/editNameLayout"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
-
-                    <android.support.design.widget.TextInputEditText
-                        android:id="@+id/editInReplyTo"
-                        android:layout_width="match_parent"
-                        android:layout_height="56sp"
-                        android:ems="10"
-                        android:imeOptions="actionNext"
-                        android:inputType="textAutoComplete|textUri"
-                        android:lines="1"
-                        android:maxLines="1"
-                        android:nextFocusForward="@id/content"
-                        android:singleLine="true"
-                        android:text="@={viewModel.inReplyTo}" />
-
-                </android.support.design.widget.TextInputLayout>
-
-                <android.support.design.widget.TextInputLayout
-                    android:id="@+id/editNameLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/name"
-                    app:counterEnabled="false"
-                    app:layout_constraintBottom_toTopOf="@+id/contentLayout"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/editInReplyToLayout">
-
-                    <android.support.design.widget.TextInputEditText
-                        android:id="@+id/editName"
-                        android:layout_width="match_parent"
-                        android:layout_height="56sp"
-                        android:ems="10"
-                        android:imeOptions="actionNext"
-                        android:inputType="textAutoComplete|textUri"
-                        android:lines="1"
-                        android:maxLines="1"
-                        android:nextFocusForward="@id/content"
-                        android:singleLine="true"
-                        android:text="@={viewModel.name}" />
-
-                </android.support.design.widget.TextInputLayout>
-
-                <android.support.design.widget.TextInputLayout
-                    android:id="@+id/contentLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/content"
-                    app:counterEnabled="true"
-                    app:layout_constraintBottom_toTopOf="@+id/editCategoryLayout"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/editNameLayout">
-
-                    <android.support.design.widget.TextInputEditText
-                        android:id="@+id/content"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:ems="10"
-                        android:gravity="top"
-                        android:imeOptions="actionNext"
-                        android:inputType="textMultiLine|textCapSentences|textAutoComplete"
-                        android:lines="10"
-                        android:nextFocusForward="@id/editCategory"
-                        android:scrollbars="vertical"
-                        android:text="@={viewModel.content}"
-                        tools:layout_editor_absoluteY="101dp" />
-                </android.support.design.widget.TextInputLayout>
-
-                <android.support.design.widget.TextInputLayout
-                    android:id="@+id/editCategoryLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/categories"
-                    app:layout_constraintBottom_toTopOf="@+id/editPhotoLayout"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/contentLayout">
-
-                    <android.support.design.widget.TextInputEditText
-                        android:id="@+id/editCategory"
-                        android:layout_width="match_parent"
-                        android:layout_height="56sp"
-                        android:ems="10"
-                        android:imeOptions="actionNext"
-                        android:inputType="text"
-                        android:lines="1"
-                        android:maxLines="1"
-                        android:singleLine="true"
-                        android:text="@={viewModel.category}" />
-
-                </android.support.design.widget.TextInputLayout>
-
-                <android.support.design.widget.TextInputLayout
-                    android:id="@+id/editPhotoLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Photo url"
-                    app:layout_constraintBottom_toTopOf="@+id/listLayout"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/editCategoryLayout">
-
-                    <android.support.design.widget.TextInputEditText
-                        android:id="@+id/editPhoto"
-                        android:layout_width="match_parent"
-                        android:layout_height="52dp"
-                        android:ems="10"
-                        android:imeOptions="actionDone"
-                        android:inputType="text"
-                        android:lines="1"
-                        android:maxLines="1"
-                        android:singleLine="true"
-                        android:text="@={viewModel.photo}" />
-                </android.support.design.widget.TextInputLayout>
-
-                <LinearLayout
-                    android:id="@+id/listLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:gravity="top|fill"
-                    android:orientation="vertical"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/editPhotoLayout">
-
-                    <TextView
-                        android:id="@+id/textView2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="0dp"
-                        android:layout_marginLeft="8dp"
-                        android:layout_marginStart="8dp"
-                        android:layout_weight="1"
-                        android:text="@string/syndication"
-                        android:textSize="16sp" />
-
-                    <LinearLayout
-                        android:id="@+id/listSyndication"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        app:multipleItems="@{client.syndicates}" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/listDestinationLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:gravity="top|fill"
-                    android:orientation="vertical"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/listLayout">
-
-                    <TextView
-                        android:id="@+id/textViewDestination"
-                        android:layout_width="wrap_content"
-                        android:layout_height="0dp"
-                        android:layout_marginLeft="8dp"
-                        android:layout_marginStart="8dp"
-                        android:layout_weight="1"
-                        android:text="@string/destinations"
-                        android:textSize="16sp" />
-
-                    <LinearLayout
-                        android:id="@+id/listDestination"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        app:destinations="@{client.destinations}" />
-
-                </LinearLayout>
-
-
-            </android.support.constraint.ConstraintLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="190dp" />
-
-        </LinearLayout>
-
-    </ScrollView>
 </layout>

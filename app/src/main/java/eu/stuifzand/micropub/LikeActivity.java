@@ -2,6 +2,7 @@ package eu.stuifzand.micropub;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
@@ -65,15 +66,12 @@ public class LikeActivity extends AppCompatActivity {
                 Log.i("micropub", "response received " + response.isSuccess());
                 if (response.isSuccess()) {
                     postModel.clear();
-                    Snackbar.make(coordinator, R.string.post_successful, Snackbar.LENGTH_LONG)
-                            .setAction("Open", v -> {
-                                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(response.getUrl()));
-                                startActivity(browserIntent);
-                            })
-                            .show();
+                    Toast.makeText(getApplicationContext(), R.string.like_successful, Toast.LENGTH_LONG).show();
                 } else {
-                    Snackbar.make(coordinator, R.string.post_failed, Snackbar.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), R.string.like_failed, Toast.LENGTH_SHORT).show();
                 }
+                setResult(Activity.RESULT_OK);
+                finish();
             });
 
             client.getMediaResponse().observe(LikeActivity.this, response -> {
@@ -103,10 +101,8 @@ public class LikeActivity extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         binding.setViewModel(postModel);
         binding.setClient(client);
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
         Intent intent = getIntent();
         Log.i("micropub", intent.toString());
@@ -160,6 +156,7 @@ public class LikeActivity extends AppCompatActivity {
             Log.i("micropub", "Sending message to " + micropubBackend);
             Post post = postModel.getPost();
             client.createPost(post, token, HttpUrl.parse(micropubBackend));
+
         };
         AuthError onError = (msg) -> LikeActivity.this.runOnUiThread(() -> Toast.makeText(LikeActivity.this, msg, Toast.LENGTH_LONG).show());
 

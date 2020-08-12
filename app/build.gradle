@@ -26,13 +26,13 @@ android {
             includeAndroidResources = true
         }
     }
-    dataBinding {
-        enabled = true
-    }
     dexOptions {
         javaMaxHeapSize "2048M"
     }
     productFlavors {
+    }
+    buildFeatures {
+        dataBinding = true
     }
 }
 
@@ -49,12 +49,11 @@ dependencies {
     implementation 'com.squareup.okhttp3:logging-interceptor:3.9.1'
     // ViewModel and LiveData
     implementation 'android.arch.lifecycle:extensions:1.1.1'
-    annotationProcessor "android.arch.lifecycle:compiler:1.1.1"
     // Java8 support for Lifecycles
     implementation 'android.arch.lifecycle:common-java8:1.1.1'
     // jsoup
     implementation 'org.jsoup:jsoup:1.11.2'
-    implementation 'com.google.code.gson:gson:2.8.2'
+    implementation 'com.google.code.gson:gson:2.8.5'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'

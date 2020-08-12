@@ -43,9 +43,6 @@ public class BookmarkActivity extends AppCompatActivity {
 
         binding.setViewModel(postModel);
         binding.setClient(client);
-//        contentBinding.setViewModel(postModel);
-//        contentBinding.setClient(client);
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
