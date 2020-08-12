@@ -12,6 +12,7 @@ public class Post {
     private HttpUrl likeOf;
     private HttpUrl bookmarkOf;
     private String[] destinationUids;
+    private String postStatus;
 
     public Post(String content) {
         if (content.equals("")) {
@@ -107,6 +108,17 @@ public class Post {
 
     public boolean hasContent() {
         return content != null;
+    }
+
+    public boolean hasPostStatus() { return postStatus != null; }
+
+    public String getPostStatus() { return postStatus; }
+
+    /**
+     * @param postStatus "published"|"draft"
+     */
+    public void setPostStatus(String postStatus) {
+        this.postStatus = postStatus;
     }
 
     public void setBookmarkOf(HttpUrl bookmarkOf) {
