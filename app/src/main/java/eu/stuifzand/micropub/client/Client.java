@@ -26,6 +26,7 @@ public class Client extends ViewModel {
     private MutableLiveData<Response> mediaResponse = new MutableLiveData<>();
     public final ObservableArrayList<Syndication> syndicates = new ObservableArrayList<>();
     public final ObservableArrayList<Destination> destinations = new ObservableArrayList<>();
+    public final ObservableArrayList<String> visibilityOptions = new ObservableArrayList<>();
 
     private String accountType;
     private String accountName;
@@ -59,6 +60,15 @@ public class Client extends ViewModel {
             JsonElement elem = config.get("media-endpoint");
             if (elem != null) {
                 setMediaEndpoint(elem.getAsString());
+            }
+
+            JsonArray visbilityElement = config.getAsJsonArray("visibility");
+            if (visbilityElement != null) {
+                visibilityOptions.clear();
+                for (int i = 0; i < visbilityElement.size(); i++) {
+                    String item = visbilityElement.get(i).getAsString();
+                    visibilityOptions.add(item);
+                }
             }
 
             // Syndications.
@@ -125,6 +135,12 @@ public class Client extends ViewModel {
             }
         }
         post.setDestinationUids(uids.toArray(new String[uids.size()]));
+
+        if (post.hasVisibility()) {
+            if (!visibilityOptions.contains(post.getVisibility())) {
+                post.setVisibility(null);
+            }
+        }
 
         new PostTask(post, micropubBackend, accessToken, response).execute();
     }

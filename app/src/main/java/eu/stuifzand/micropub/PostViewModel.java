@@ -30,6 +30,8 @@ public class PostViewModel extends ViewModel {
     public final ObservableField<String> likeOf = new ObservableField<>();
     public final ObservableField<String> bookmarkOf = new ObservableField<>();
     public final ObservableField<String> postStatus = new ObservableField<>();
+    public final ObservableField<String> visibility = new ObservableField<>();
+
 
     public PostViewModel() {
         this.name.set("");
@@ -40,6 +42,7 @@ public class PostViewModel extends ViewModel {
         this.likeOf.set("");
         this.bookmarkOf.set("");
         this.postStatus.set("");
+        this.visibility.set("");
     }
 
     public void clear() {
@@ -51,6 +54,7 @@ public class PostViewModel extends ViewModel {
         this.likeOf.set("");
         this.bookmarkOf.set("");
         this.postStatus.set("");
+        this.visibility.set("");
     }
 
     public void findReplyTo(String urlOrNote) {
@@ -101,6 +105,9 @@ public class PostViewModel extends ViewModel {
         }
         if (!this.postStatus.get().equals("")) {
             post.setPostStatus((postStatus.get()));
+        }
+        if (!this.visibility.get().equals("")) {
+            post.setPostStatus((visibility.get()));
         }
         return post;
     }
