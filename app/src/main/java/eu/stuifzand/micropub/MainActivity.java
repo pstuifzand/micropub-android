@@ -167,6 +167,14 @@ public class MainActivity extends AppCompatActivity {
                 inputManager.hideSoftInputFromInputMethod(this.getCurrentFocus().getWindowToken(), 0);
             }
             galleryIntent(null);
+        } else if (id == R.id.action_save_draft) {
+            InputMethodManager inputManager = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (this.getCurrentFocus() != null && inputManager != null) {
+                inputManager.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(), 0);
+                inputManager.hideSoftInputFromInputMethod(this.getCurrentFocus().getWindowToken(), 0);
+            }
+            postModel.postStatus.set("draft");
+            sendPost(null);
         }
 
         return super.onOptionsItemSelected(item);
