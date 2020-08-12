@@ -77,39 +77,57 @@
 
             </LinearLayout>
 
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/contentLayout"
-                android:layout_width="match_parent"
+            <RadioGroup
+                android:id="@+id/radioGroupVisibility"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:hint="@string/content"
-                app:counterEnabled="true"
-                app:layout_constraintBottom_toTopOf="@+id/editCategoryLayout"
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toTopOf="@id/editPhotoLayout"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/editNameLayout">
+                app:layout_constraintTop_toBottomOf="@id/editCategoryLayout"
+                android:checkedButton="@={viewModel.checkedVisibility}"
+                >
 
-                <android.support.design.widget.TextInputEditText
-                    android:id="@+id/content"
-                    android:layout_width="match_parent"
+                <RadioButton
+                    android:id="@+id/radioButtonPublic"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:ems="10"
-                    android:gravity="top"
-                    android:imeOptions="actionNext"
-                    android:inputType="textMultiLine|textCapSentences|textAutoComplete"
-                    android:lines="10"
-                    android:nextFocusForward="@id/editCategory"
-                    android:scrollbars="vertical"
-                    android:text="@={viewModel.content}"
-                    tools:layout_editor_absoluteY="101dp" />
-            </android.support.design.widget.TextInputLayout>
+                    android:text="@string/visibility_public"
+                    android:visibility="@{client.hasVisibilityPublic}"
+                    />
+
+                <RadioButton
+                    android:id="@+id/radioButtonUnlisted"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/visibility_unlisted"
+                    android:visibility="@{client.hasVisibilityUnlisted}"
+                    />
+
+                <RadioButton
+                    android:id="@+id/radioButtonProtected"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/visibility_protected"
+                    android:visibility="@{client.hasVisibilityProtected}"
+                    />
+
+                <RadioButton
+                    android:id="@+id/radioButtonPrivate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/visibility_private"
+                    android:visibility="@{client.hasVisibilityPrivate}"
+                    />
+            </RadioGroup>
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/editCategoryLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/categories"
-                app:layout_constraintBottom_toTopOf="@+id/editPhotoLayout"
+                app:layout_constraintBottom_toTopOf="@+id/radioGroupVisibility"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
@@ -138,7 +156,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/editCategoryLayout">
+                app:layout_constraintTop_toBottomOf="@+id/radioGroupVisibility">
 
                 <android.support.design.widget.TextInputEditText
                     android:id="@+id/editPhoto"
@@ -177,6 +195,33 @@
                     android:singleLine="true"
                     android:text="@={viewModel.inReplyTo}" />
 
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/contentLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/content"
+                app:counterEnabled="true"
+                app:layout_constraintBottom_toTopOf="@+id/editCategoryLayout"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/editNameLayout">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/content"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:gravity="top"
+                    android:imeOptions="actionNext"
+                    android:inputType="textMultiLine|textCapSentences|textAutoComplete"
+                    android:lines="10"
+                    android:nextFocusForward="@id/editCategory"
+                    android:scrollbars="vertical"
+                    android:text="@={viewModel.content}"
+                    tools:layout_editor_absoluteY="101dp" />
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout

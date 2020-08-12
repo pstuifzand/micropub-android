@@ -72,6 +72,10 @@ class PostTask extends AsyncTask<String, Void, Void> {
             builder.add("post-status", post.getPostStatus());
         }
 
+        if (post.hasVisibility()) {
+            builder.add("visibility", post.getVisibility());
+        }
+
         RequestBody formBody = builder.build();
 
         Request request = new Request.Builder()

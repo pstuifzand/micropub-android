@@ -13,10 +13,11 @@ public class Post {
     private HttpUrl bookmarkOf;
     private String[] destinationUids;
     private String postStatus;
+    private String visibility;
 
     public Post(String content) {
         if (content.equals("")) {
-            this.content=null;
+            this.content = null;
         } else {
             this.content = content;
         }
@@ -110,9 +111,13 @@ public class Post {
         return content != null;
     }
 
-    public boolean hasPostStatus() { return postStatus != null; }
+    public boolean hasPostStatus() {
+        return postStatus != null;
+    }
 
-    public String getPostStatus() { return postStatus; }
+    public String getPostStatus() {
+        return postStatus;
+    }
 
     /**
      * @param postStatus "published"|"draft"
@@ -121,12 +126,26 @@ public class Post {
         this.postStatus = postStatus;
     }
 
+    public boolean hasVisibility() {
+        return visibility != null;
+    }
+
+    public String getVisibility() {
+        return visibility;
+    }
+
+    public void setVisibility(String visibility) {
+        this.visibility = visibility;
+    }
+
     public void setBookmarkOf(HttpUrl bookmarkOf) {
         this.bookmarkOf = bookmarkOf;
     }
+
     public boolean hasBookmarkOf() {
-        return bookmarkOf!=null;
+        return bookmarkOf != null;
     }
+
     public String getBookmarkOf() {
         return bookmarkOf.toString();
     }

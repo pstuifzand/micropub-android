@@ -4,6 +4,8 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.databinding.ObservableArrayList;
+import android.databinding.ObservableBoolean;
+import android.databinding.ObservableField;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -26,6 +28,11 @@ public class Client extends ViewModel {
     private MutableLiveData<Response> mediaResponse = new MutableLiveData<>();
     public final ObservableArrayList<Syndication> syndicates = new ObservableArrayList<>();
     public final ObservableArrayList<Destination> destinations = new ObservableArrayList<>();
+    public final ObservableArrayList<String> visibilityOptions = new ObservableArrayList<>();
+    public final ObservableBoolean hasVisibilityPublic = new ObservableBoolean(false);
+    public final ObservableBoolean hasVisibilityUnlisted = new ObservableBoolean(false);
+    public final ObservableBoolean hasVisibilityProtected = new ObservableBoolean(false);
+    public final ObservableBoolean hasVisibilityPrivate = new ObservableBoolean(false);
 
     private String accountType;
     private String accountName;
@@ -59,6 +66,23 @@ public class Client extends ViewModel {
             JsonElement elem = config.get("media-endpoint");
             if (elem != null) {
                 setMediaEndpoint(elem.getAsString());
+            }
+
+            JsonArray visibilityElement = config.getAsJsonArray("visibility");
+
+            if (visibilityElement != null) {
+                visibilityOptions.clear();
+
+                for (int i = 0; i < visibilityElement.size(); i++) {
+                    String item = visibilityElement.get(i).getAsString();
+                    switch (item) {
+                        case "public": hasVisibilityPublic.set(true); break;
+                        case "unlisted": hasVisibilityUnlisted.set(true); break;
+                        case "protected": hasVisibilityProtected.set(true); break;
+                        case "private": hasVisibilityPrivate.set(true); break;
+                    }
+                    visibilityOptions.add(item);
+                }
             }
 
             // Syndications.
@@ -125,6 +149,12 @@ public class Client extends ViewModel {
             }
         }
         post.setDestinationUids(uids.toArray(new String[uids.size()]));
+
+        if (post.hasVisibility()) {
+            if (!visibilityOptions.contains(post.getVisibility())) {
+                post.setVisibility(null);
+            }
+        }
 
         new PostTask(post, micropubBackend, accessToken, response).execute();
     }

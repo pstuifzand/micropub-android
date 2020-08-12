@@ -25,4 +25,8 @@
     <string name="url_bookmarked">URL bookmarked</string>
     <string name="url_bookmark_failed">Failed to bookmark URL</string>
     <string name="save_draft">Save draft</string>
+    <string name="visibility_public">Public</string>
+    <string name="visibility_unlisted">Unlisted</string>
+    <string name="visibility_protected">Protected</string>
+    <string name="visibility_private">Private</string>
 </resources>
