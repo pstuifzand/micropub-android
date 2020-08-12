@@ -67,6 +67,11 @@ class PostTask extends AsyncTask<String, Void, Void> {
         if (post.hasBookmarkOf()) {
             builder.add("bookmark-of[]", post.getBookmarkOf());
         }
+
+        if (post.hasPostStatus()) {
+            builder.add("post-status", post.getPostStatus());
+        }
+
         RequestBody formBody = builder.build();
 
         Request request = new Request.Builder()
