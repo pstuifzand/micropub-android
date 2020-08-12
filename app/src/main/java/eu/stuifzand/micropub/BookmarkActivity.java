@@ -86,9 +86,9 @@ public class BookmarkActivity extends AppCompatActivity {
                 Log.i("micropub", "response received " + response.isSuccess());
                 if (response.isSuccess()) {
                     postModel.clear();
-                    Toast.makeText(getApplicationContext(), R.string.url_bookmarked, Toast.LENGTH_LONG);
+                    Toast.makeText(getApplicationContext(), R.string.url_bookmarked, Toast.LENGTH_LONG).show();
                 } else {
-                    Toast.makeText(getApplicationContext(), R.string.url_bookmark_failed, Toast.LENGTH_LONG);
+                    Toast.makeText(getApplicationContext(), R.string.url_bookmark_failed, Toast.LENGTH_LONG).show();
                 }
                 setResult(Activity.RESULT_OK);
                 finish();
