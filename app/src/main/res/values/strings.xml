@@ -24,4 +24,7 @@
     <string name="like_failed">Like failed</string>
     <string name="url_bookmarked">URL bookmarked</string>
     <string name="url_bookmark_failed">Failed to bookmark URL</string>
+    <string name="compose_shortcut_short_label">Compose</string>
+    <string name="compose_shortcut_long_label">Compose</string>
+    <string name="compose_disabled_message">Compose disabled</string>
 </resources>
