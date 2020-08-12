@@ -2,6 +2,7 @@ package eu.stuifzand.micropub;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
@@ -89,6 +90,8 @@ public class BookmarkActivity extends AppCompatActivity {
                 } else {
                     Toast.makeText(getApplicationContext(), R.string.url_bookmark_failed, Toast.LENGTH_LONG);
                 }
+                setResult(Activity.RESULT_OK);
+                finish();
             });
         };
 
