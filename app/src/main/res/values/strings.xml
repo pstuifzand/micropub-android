@@ -22,4 +22,6 @@
     <string name="destinations">Destinations</string>
     <string name="like_successful">Like successful</string>
     <string name="like_failed">Like failed</string>
+    <string name="url_bookmarked">URL bookmarked</string>
+    <string name="url_bookmark_failed">Failed to bookmark URL</string>
 </resources>

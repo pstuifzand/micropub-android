@@ -85,14 +85,9 @@ public class BookmarkActivity extends AppCompatActivity {
                 Log.i("micropub", "response received " + response.isSuccess());
                 if (response.isSuccess()) {
                     postModel.clear();
-                    Snackbar.make(coordinator, R.string.post_successful, Snackbar.LENGTH_LONG)
-                            .setAction("Open", v -> {
-                                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(response.getUrl()));
-                                startActivity(browserIntent);
-                            })
-                            .show();
+                    Toast.makeText(getApplicationContext(), R.string.url_bookmarked, Toast.LENGTH_LONG);
                 } else {
-                    Snackbar.make(coordinator, R.string.post_failed, Snackbar.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), R.string.url_bookmark_failed, Toast.LENGTH_LONG);
                 }
             });
         };
